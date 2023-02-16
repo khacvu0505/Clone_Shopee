@@ -5,7 +5,7 @@ import http from 'src/utils/http'
 const PRODUCT_URL = '/products'
 
 export const getProductList = (params?: ProductListConfig) => {
-  return http.get<ProductList>(PRODUCT_URL, { params })
+  return http.get<SuccessResponse<ProductList>>(PRODUCT_URL, { params })
 }
 
 export const getProduct = (id: string) => {

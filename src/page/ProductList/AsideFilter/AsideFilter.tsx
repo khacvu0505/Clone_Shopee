@@ -1,13 +1,66 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button'
-import Input from 'src/components/Input'
 import { path } from 'src/constant/path'
+import { Category } from 'src/types/category.type'
+import { QueryConfig } from '../ProductList'
+import classNames from 'classnames'
+import InputNumber from 'src/components/InputNumber'
+import { useForm, Controller } from 'react-hook-form'
+import { Schema, schema } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { isEmpty } from 'lodash'
 
-export default function AsideFilter() {
+const priceSchema = schema.pick(['price_min', 'price_max'])
+interface AsideFilterProps {
+  dataCategory?: Category[] | []
+  queryConfig: QueryConfig
+}
+
+// interface FormData {
+//   price_min: string
+//   price_max: string
+// }
+type FormData = Pick<Schema, 'price_min' | 'price_max'>
+
+export default function AsideFilter(props: AsideFilterProps) {
+  const { dataCategory = [], queryConfig } = props
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm<FormData>({
+    defaultValues: {
+      price_min: '',
+      price_max: ''
+    },
+    resolver: yupResolver(priceSchema)
+  })
+
+  const navigate = useNavigate()
+  const categoryId = queryConfig.category
+  const isActiveCategory = (id: string) => categoryId === id
+
+  const onSubmit = (data: FormData) => {
+    navigate({
+      pathname: path.home,
+      search: createSearchParams({
+        ...queryConfig,
+        price_min: data.price_min || '',
+        price_max: data.price_max || ''
+      }).toString()
+    })
+  }
+
   return (
     <div className='py-4'>
-      <Link to={path.home} className='flex items-center font-bold'>
+      <Link
+        to={path.home}
+        className={classNames('flex items-center font-bold', {
+          'text-orange': !categoryId
+        })}
+      >
         <svg viewBox='0 0 12 10' className='mr-3 h-4 w-3 fill-current'>
           <g fillRule='evenodd' stroke='none' strokeWidth={1}>
             <g transform='translate(-373 -208)'>
@@ -25,19 +78,27 @@ export default function AsideFilter() {
       </Link>
       <div className='my-4'>
         <ul>
-          <li className='py-2 pl-2'>
-            <Link to={path.home} className='relative px-2 font-semibold text-orange'>
-              <svg viewBox='0 0 4 7' className='absolute top-1 left-[-10px] h-2 w-2 fill-orange'>
-                <polygon points='4 3.5 0 0 0 7' />
-              </svg>
-              Thời trang nam
-            </Link>
-          </li>
-          <li>
-            <Link to={path.home} className='relative px-2'>
-              Điện thoại
-            </Link>
-          </li>
+          {dataCategory.map((item) => (
+            <li className='py-2 pl-2' key={item._id}>
+              <Link
+                to={{
+                  pathname: path.home,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  //@ts-ignore
+                  search: `${new URLSearchParams({ ...queryConfig, category: item._id })}`
+                }}
+                className={`relative px-2  ${isActiveCategory(item._id) ? 'font-semibold text-orange' : ''}`}
+              >
+                {isActiveCategory(item._id) && (
+                  <svg viewBox='0 0 4 7' className='absolute top-1 left-[-10px] h-2 w-2 fill-orange'>
+                    <polygon points='4 3.5 0 0 0 7' />
+                  </svg>
+                )}
+
+                {item.name}
+              </Link>
+            </li>
+          ))}
         </ul>
         <Link to={path.home} className='mt-4 flex items-center font-bold'>
           <svg enableBackground='new 0 0 15 15' viewBox='0 0 15 15' x={0} y={0} className='mr-3 w-3 stroke-current'>
@@ -56,23 +117,43 @@ export default function AsideFilter() {
         <div className='my-4 h-[1px] bg-gray-300' />
         <div className='my-5'>
           <div>Khoảng giá</div>
-          <form className='mt-2'>
+          <form className='mt-2' onSubmit={handleSubmit(onSubmit)}>
             <div className='flex items-start'>
-              <Input
-                type='text'
-                className='w-full grow  p-1 text-sm outline-none focus:shadow-md'
-                name='from'
-                placeholder='Từ'
+              <Controller
+                control={control}
+                name='price_min'
+                render={({ field }) => (
+                  <InputNumber
+                    type='text'
+                    name='from'
+                    className='w-full grow  p-1 text-sm outline-none focus:shadow-md'
+                    placeholder='Từ'
+                    onChange={(event) => field.onChange(event)}
+                    value={field.value}
+                    ref={field.ref}
+                  />
+                )}
               />
+
               <div className='mx-2 mt-2 shrink-0'>-</div>
-              <Input
-                type='text'
-                className='w-full grow  p-1 text-sm outline-none focus:shadow-md'
-                name='to'
-                placeholder='Đến'
+              <Controller
+                control={control}
+                name='price_max'
+                render={({ field }) => (
+                  <InputNumber
+                    type='text'
+                    name='from'
+                    className='w-full grow  p-1 text-sm outline-none focus:shadow-md'
+                    placeholder='Đến'
+                    onChange={(event) => field.onChange(event)}
+                    value={field.value}
+                    ref={field.ref}
+                  />
+                )}
               />
             </div>
-            <Button className='mt-2 w-full rounded-sm bg-orange py-2 text-sm text-white hover:bg-opacity-80'>
+            {!isEmpty(errors) && <div className='ml-1 text-center text-sm italic text-red-500'>Giá không phù hợp</div>}
+            <Button className='mt-2 w-full rounded-sm bg-orange py-2 text-sm text-white outline-none hover:bg-opacity-80'>
               Áp dụng
             </Button>
           </form>

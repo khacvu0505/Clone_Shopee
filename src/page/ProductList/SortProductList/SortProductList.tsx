@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react'
 import { QueryConfig } from '../ProductList'
 import { SortBy, Order } from 'src/constant/product'
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { path } from 'src/constant/path'
+import { omit } from 'lodash'
 
 interface SortProductListProps {
   pageSize: number
@@ -10,7 +11,8 @@ interface SortProductListProps {
 }
 
 export default function SortProductList(props: SortProductListProps) {
-  const { queryConfig, pageSize = 1 } = props
+  const { queryConfig, pageSize } = props
+  const page = Number(queryConfig.page) || 1
   const { sort_by = SortBy.createdAt, order = Order.desc } = queryConfig
   const navigate = useNavigate()
 
@@ -35,13 +37,18 @@ export default function SortProductList(props: SortProductListProps) {
     ]
   }, [])
 
-  const handleNavigate = (redirect: SortBy) => {
+  const handleSort = (redirect: SortBy) => {
     navigate({
       pathname: path.home,
-      search: createSearchParams({
-        ...queryConfig,
-        sort_by: redirect
-      }).toString()
+      search: createSearchParams(
+        omit(
+          {
+            ...queryConfig,
+            sort_by: redirect
+          },
+          'order'
+        )
+      ).toString()
     })
   }
 
@@ -54,16 +61,23 @@ export default function SortProductList(props: SortProductListProps) {
             ? 'bg-orange text-white hover:bg-orange/80 '
             : 'bg-white text-black hover:bg-slate-200'
         }`}
-        onClick={() => handleNavigate(item.value)}
+        onClick={() => handleSort(item.value)}
       >
         {item.key}
       </button>
     ))
   }
 
-  // const handleSort = () => {
-
-  // }
+  const handlePriceOrder = (orderValue: Order) => {
+    navigate({
+      pathname: path.home,
+      search: createSearchParams({
+        ...queryConfig,
+        sort_by: SortBy.price,
+        order: orderValue
+      }).toString()
+    })
+  }
 
   return (
     <div className='bg-gray-300/40 py-4 px-2'>
@@ -102,39 +116,91 @@ export default function SortProductList(props: SortProductListProps) {
           </button> */}
           {renderBtnSort()}
           <select
-            className={`h-8 rounded-sm px-4 text-center text-sm capitalize ${
+            className={`h-8 rounded-sm border-none px-4 text-center text-sm capitalize outline-none ${
               isActiveSortBy(SortBy.price)
                 ? 'bg-orange text-white hover:bg-orange/80 '
                 : 'bg-white text-black hover:bg-slate-200'
             }`}
-            value={order || ''}
+            value={''}
+            onChange={(event) => handlePriceOrder(event.target.value as Order)}
           >
-            <option selected disabled value=''>
-              Giá
+            <option disabled value='' className='bg-slate-300 text-black'>
+              Lọc theo giá
             </option>
-            <option value={Order.asc}>Giá từ thấp đến cao</option>
-            <option value={Order.desc}>Giá từ cao đến thấp</option>
+            <option value={Order.asc} className='bg-white text-black'>
+              Giá từ thấp đến cao
+            </option>
+            <option value={Order.desc} className='bg-white text-black'>
+              Giá từ cao đến thấp
+            </option>
           </select>
         </div>
         <div className='flex items-center'>
           <div>
-            <span className='text-orange'>1</span>
-            <span>/2</span>
+            <span className='text-orange'>{page}</span>
+            <span>/{pageSize || 1}</span>
           </div>
-          <div className='ml-2'>
-            <button className='h-8 cursor-not-allowed rounded-tl-sm rounded-bl-sm bg-white/60  px-2 shadow-sm hover:bg-slate-300'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='h-4 w-4'
+          <div className='ml-2 flex items-center'>
+            <div className={`${page <= 1 ? 'cursor-not-allowed hover:bg-white/60' : 'cursor-pointer'} bg-white  p-2`}>
+              <Link
+                to={{
+                  pathname: path.home,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  //@ts-ignore
+                  search: `${new URLSearchParams({ ...queryConfig, page: page - 1 })}`
+                }}
+                // className={`mx-2 rounded bg-white px-2  py-3 shadow-sm hover:bg-slate-100 ${
+                //   page > 1 ? 'cursor-pointer' : 'pointer-events-none'
+                // }`}
+                className={`bg-white/60shadow-sm h-8 cursor-not-allowed rounded-tl-sm rounded-bl-sm hover:bg-slate-300 ${
+                  page > 1 ? 'cursor-pointer' : 'pointer-events-none'
+                }`}
               >
-                <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
-              </svg>
-            </button>
-            <button className='h-8 rounded-tl-sm rounded-bl-sm bg-white/60  px-2 shadow-sm hover:bg-slate-300'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='h-4 w-4'
+                >
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
+                </svg>
+              </Link>
+            </div>
+            <div
+              className={`${
+                page >= pageSize ? 'cursor-not-allowed hover:bg-white/60' : 'cursor-pointer'
+              } bg-white  p-2`}
+            >
+              <Link
+                to={{
+                  pathname: path.home,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  //@ts-ignore
+                  search: `${new URLSearchParams({ ...queryConfig, page: page + 1 })}`
+                }}
+                // className={`mx-2 rounded bg-white px-2  py-3 shadow-sm hover:bg-slate-100 ${
+                //   page > 1 ? 'cursor-pointer' : 'pointer-events-none'
+                // }`}
+                className={`bg-white/60shadow-sm h-8 cursor-not-allowed rounded-tl-sm rounded-bl-sm hover:bg-slate-300 ${
+                  page < pageSize ? 'cursor-pointer' : 'pointer-events-none'
+                }`}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='h-4 w-4'
+                >
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
+                </svg>
+              </Link>
+            </div>
+
+            {/* <button className='h-8 rounded-tl-sm rounded-bl-sm bg-white/60  px-2 shadow-sm hover:bg-slate-300'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
@@ -145,7 +211,7 @@ export default function SortProductList(props: SortProductListProps) {
               >
                 <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
               </svg>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

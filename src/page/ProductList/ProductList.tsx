@@ -4,6 +4,7 @@ import SortProductList from './SortProductList'
 import Product from './Product/Product'
 import { useQuery } from '@tanstack/react-query'
 import { getProductList } from 'src/api/product.api'
+import { getCategoryList } from 'src/api/category.api'
 import useQueryParams from 'src/hooks/useQueryParams'
 import Paginatiton from 'src/components/Paginatiton'
 import { ProductListConfig } from 'src/types/product.type'
@@ -44,7 +45,7 @@ export default function ProductList() {
   const queryConfig: QueryConfig = omitBy(
     {
       page: queryParams.page || '1',
-      limit: queryParams.limit,
+      limit: queryParams.limit || '20',
       sort_by: queryParams.sort_by,
       name: queryParams.name,
       category: queryParams.category,
@@ -56,10 +57,15 @@ export default function ProductList() {
     },
     isUndefined
   )
-  const { data } = useQuery({
+
+  const { data: productList } = useQuery({
     queryKey: ['productList', queryParams],
     queryFn: () => getProductList(queryConfig as ProductListConfig),
     keepPreviousData: true
+  })
+  const { data: dataCategory } = useQuery({
+    queryKey: ['categoryList'],
+    queryFn: getCategoryList
   })
 
   return (
@@ -67,15 +73,16 @@ export default function ProductList() {
       <div className='container'>
         <div className='grid grid-cols-12 gap-6'>
           <div className='col-span-3'>
-            <AsideFilter />
+            <AsideFilter queryConfig={queryConfig} dataCategory={dataCategory?.data.data} />
           </div>
           <div className='col-span-9'>
-            <SortProductList queryConfig={queryConfig} pageSize={Number(data?.data.pagination.page_size)} />
+            <SortProductList queryConfig={queryConfig} pageSize={Number(productList?.data.data.pagination.page_size)} />
+
             <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4'>
-              {data && data.data.products.map((product) => <Product key={product._id} product={product} />)}
+              {productList &&
+                productList.data.data.products.map((product) => <Product key={product._id} product={product} />)}
             </div>
-            {/* pageSize={data?.data.pagination.page_size || 1} */}
-            <Paginatiton queryConfig={queryConfig} pageSize={Number(data?.data.pagination.page_size)} />
+            <Paginatiton queryConfig={queryConfig} pageSize={Number(productList?.data.data.pagination.page_size)} />
           </div>
         </div>
       </div>

@@ -75,7 +75,35 @@ export const schema = yup
       .required('Confirm Password là bắt buộc')
       .min(6, 'Độ dài từ 6 - 160 ký tự')
       .max(160, 'Độ dài từ 160 - 160 ký tự')
-      .oneOf([yup.ref('password'), null], 'Confirm Password phải trùng với Password')
+      .oneOf([yup.ref('password'), null], 'Confirm Password phải trùng với Password'),
+    price_min: yup.string().test({
+      name: 'price-not-allowed',
+      message: 'Giá không phù hợp',
+      test: function (value) {
+        const price_min = value
+        const { price_max } = this.parent as { price_min: string; price_max: string }
+        if (price_min !== '' && price_max !== '') {
+          return Number(price_min) <= Number(price_max)
+        }
+        if (price_min === '' && price_max === '') return false
+
+        return true
+      }
+    }),
+    price_max: yup.string().test({
+      name: 'price-max-not-allowed',
+      message: 'Giá không phù hợp',
+      test: function (value) {
+        const price_max = value
+        const { price_min } = this.parent as { price_min: string; price_max: string }
+        if (price_min !== '' && price_max !== '') {
+          return Number(price_min) <= Number(price_max)
+        }
+        if (price_min === '' && price_max === '') return false
+
+        return true
+      }
+    })
   })
   .required()
 

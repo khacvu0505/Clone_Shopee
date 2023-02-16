@@ -34,7 +34,7 @@ export default function Input<Data extends FieldValues>({
   autoComplete,
   ...rest
 }: Props<Data>) {
-  const registerResult = register && name ? register(name, rules) : {}
+  const registerResult = register && name ? register(name, rules) : null
   return (
     <div className={className}>
       <input
