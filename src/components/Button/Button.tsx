@@ -1,14 +1,19 @@
 import React from 'react'
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: string
   className?: string
-  type?: string
+  // type?: string
   isLoading?: boolean
+  rest?: React.ButtonHTMLAttributes<HTMLButtonElement>
 }
-export default function Button({ children, className, isLoading = false }: ButtonProps) {
+export default function Button({ children, className, isLoading = false, ...rest }: ButtonProps) {
   return (
-    <button disabled={isLoading} className={`${className} ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+    <button
+      {...rest}
+      disabled={isLoading}
+      className={`${className} ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+    >
       {isLoading && (
         <svg
           aria-hidden='true'
