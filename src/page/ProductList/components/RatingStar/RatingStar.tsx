@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
 import React from 'react'
-import { Link, createSearchParams, useNavigate } from 'react-router-dom'
-import { QueryConfig } from '../ProductList'
+import { createSearchParams, useNavigate } from 'react-router-dom'
+import { QueryConfig } from '../../ProductList'
 import { path } from 'src/constant/path'
 
 interface RatingStarProps {
@@ -32,8 +32,7 @@ export default function RatingStar({ queryConfig }: RatingStarProps) {
                 .map((_, indexStart) => {
                   if (index < 5 - indexStart) {
                     return (
-                      // <div key={index}>
-                      <svg key={index} viewBox='0 0 9.5 8' className='w-5'>
+                      <svg key={indexStart} viewBox='0 0 9.5 8' className='w-5'>
                         <defs>
                           <linearGradient id='ratingStarGradient' x1='50%' x2='50%' y1='0%' y2='100%'>
                             <stop offset={0} stopColor='#ffca11' />

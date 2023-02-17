@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { QueryConfig } from '../ProductList'
+import { QueryConfig } from '../../ProductList'
 import { SortBy, Order } from 'src/constant/product'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { path } from 'src/constant/path'

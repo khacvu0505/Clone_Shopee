@@ -8,6 +8,6 @@ export const getProductList = (params?: ProductListConfig) => {
   return http.get<SuccessResponse<ProductList>>(PRODUCT_URL, { params })
 }
 
-export const getProduct = (id: string) => {
+export const getProductDetail = (id: string) => {
   return http.get<SuccessResponse<Product>>(`${PRODUCT_URL}/${id}`)
 }

@@ -3,5 +3,6 @@ export const path = {
   register: '/register',
   login: '/login',
   profile: '/profile',
-  logout: '/logout'
+  logout: '/logout',
+  detail: '/product-detail/:id'
 }

@@ -1,6 +1,13 @@
-export default function ProductRating({ rating }: { rating: number }) {
+interface ProductRatingProps {
+  rating: number
+  color?: string
+}
+
+export default function ProductRating(props: ProductRatingProps) {
+  const { rating, color = 'yellow' } = props
+
   const handlWidthStar = (value: number) => {
-    if (rating > value) {
+    if (rating >= value) {
       return '100%'
     }
     if (rating < value && value - rating < 1) {
@@ -20,7 +27,7 @@ export default function ProductRating({ rating }: { rating: number }) {
               viewBox='0 0 15 15'
               x={0}
               y={0}
-              className='h3- w-3 fill-yellow-500 text-yellow-300'
+              className={`'h3- w-3 fill-${color}-500 text-${color}-300`}
             >
               <polygon
                 points='7.5 .8 9.7 5.4 14.5 5.9 10.7 9.1 11.8 14.2 7.5 11.6 3.2 14.2 4.3 9.1 .5 5.9 5.3 5.4'
