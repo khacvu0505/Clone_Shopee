@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
 import React from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
-import { QueryConfig } from '../../ProductList'
 import { path } from 'src/constant/path'
+import { QueryConfig } from 'src/hooks/useQueryConfig'
 
 interface RatingStarProps {
   queryConfig: QueryConfig

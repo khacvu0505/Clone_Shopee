@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { path } from 'src/constant/path'
-import { QueryConfig } from 'src/page/ProductList/ProductList'
+import { QueryConfig } from 'src/hooks/useQueryConfig'
 import { ProductListConfig } from 'src/types/product.type'
 
 interface PaginationProps {

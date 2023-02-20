@@ -3,7 +3,6 @@ import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button'
 import { path } from 'src/constant/path'
 import { Category } from 'src/types/category.type'
-import { QueryConfig } from '../../ProductList'
 import classNames from 'classnames'
 import InputNumber from 'src/components/InputNumber'
 import { useForm, Controller } from 'react-hook-form'
@@ -11,6 +10,7 @@ import { Schema, schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { isEmpty, omit } from 'lodash'
 import RatingStar from '../RatingStar'
+import { QueryConfig } from 'src/hooks/useQueryConfig'
 
 const priceSchema = schema.pick(['price_min', 'price_max'])
 interface AsideFilterProps {
