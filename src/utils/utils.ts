@@ -25,3 +25,17 @@ export function formatNumberToSocialStyle(number: number) {
 export function rateSale(original: number, sale: number) {
   return Math.round(((original - sale) / original) * 100) + '%'
 }
+
+export const removeSpecialCharacters = (value: string) => {
+  // eslint-disable-next-line no-useless-escape
+  return value.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, '')
+}
+
+export const generateNameId = ({ name, id }: { name: string; id: string }) => {
+  return removeSpecialCharacters(name).replace(/\s/g, '-') + '--i-' + id
+}
+
+export const getIdFromNameId = (nameId: string) => {
+  const arr = nameId.split('--i-')
+  return arr[arr.length - 1]
+}

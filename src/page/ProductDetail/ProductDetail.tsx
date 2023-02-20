@@ -1,40 +1,126 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import React from 'react'
 import { useParams } from 'react-router-dom'
-import { getProductDetail } from 'src/api/product.api'
+import { getProductDetail, getProductList } from 'src/api/product.api'
 import InputNumber from 'src/components/InputNumber'
 import ProductRating from 'src/components/ProductRating'
-import { formatCurrency, rateSale, formatNumberToSocialStyle } from 'src/utils/utils'
+import { formatCurrency, rateSale, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils/utils'
 import DOMPurify from 'isomorphic-dompurify'
-// import * as DOMPurify from 'dompurify'
+import { Product, ProductListConfig } from 'src/types/product.type'
+import ProductItemComponent from '../ProductList/components/Product'
+import QuantityController from 'src/components/QuantityController'
 
 export default function ProductDetail() {
-  const { id } = useParams()
+  const { nameId } = useParams()
+  const id = getIdFromNameId(nameId as string)
+
+  const [buyCount, setBuyCount] = useState(1)
 
   const { data: dataProductDetail } = useQuery({
     queryKey: ['productDetail', id],
     queryFn: () => getProductDetail(id as string),
     enabled: !!id
   })
-  console.log('dataProductDetail', dataProductDetail)
+
   const product = dataProductDetail?.data.data
 
+  const queryConfig = { page: 1, limit: 20, category: product?.category._id }
+
+  const { data: dataproductList } = useQuery({
+    queryKey: ['productList', queryConfig],
+    queryFn: () => getProductList(queryConfig as ProductListConfig),
+    enabled: Boolean(product),
+    staleTime: 3 * 60 * 1000
+  })
+
+  console.log('dataproductList', dataproductList)
+
+  const [currentIndexImage, setCurrentIndexImage] = useState([0, 5])
+  const [currentImage, setActiveImg] = useState('')
+
+  const imageRef = useRef<HTMLImageElement>(null)
+
+  const currentImages = useMemo(() => {
+    return product?.images.slice(...currentIndexImage) || []
+  }, [product, currentIndexImage])
+
+  useEffect(() => {
+    if (product && product.images.length > 0) {
+      setActiveImg(product.images[0])
+    }
+  }, [product])
+
+  const chooseActive = (img: string) => {
+    setActiveImg(img)
+  }
+
+  const next = () => {
+    if (currentIndexImage[1] < (product as Product)?.images.length) {
+      setCurrentIndexImage((prev) => [prev[0] + 1, prev[1] + 1])
+    }
+  }
+  const previous = () => {
+    if (currentIndexImage[0] > 0) {
+      setCurrentIndexImage((prev) => [prev[0] - 1, prev[1] - 1])
+    }
+  }
+
+  const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const image = imageRef.current as HTMLImageElement
+    const { naturalHeight, naturalWidth } = image
+    // Bubble event: khi hover vào thằng con cũng là hover vào thằng cha nên là { naturalHeight, naturalWidth } sẽ khác nhau => dẫn đến bị giật lag
+
+    // Cách 1: Lấy offsetX, offsetY đơn giản khi chúng ta xử lý được bubble event
+    // const { offsetX, offsetY } = event.nativeEvent
+
+    // Cách 2: Lấy offsetX, offsetY đơn giản khi chúng ta KHÔNG xử lý được bubble event
+    const offsetX = event.pageX - (rect.x + window.scrollX)
+    const offsetY = event.pageY - (rect.y + window.scrollY)
+
+    const top = offsetY * (1 - naturalHeight / rect.height)
+    const left = offsetX * (1 - naturalWidth / rect.width)
+    image.style.width = naturalWidth + 'px'
+    image.style.height = naturalHeight + 'px'
+    image.style.maxWidth = 'unset'
+    image.style.top = top + 'px'
+    image.style.left = left + 'px'
+  }
+
+  const handleRemoveZoom = () => {
+    imageRef.current?.removeAttribute('style')
+  }
+
+  const handleBuyCount = (value: number) => {
+    setBuyCount(value)
+  }
+
   if (!product) return null
+
   return (
     <div className='bg-gray-200'>
-      <div className='bg-white p-4 shadow'>
-        <div className='container'>
+      <div className='container'>
+        <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>
             <div className='col-span-5'>
-              <div className='relative w-full pt-[100%]'>
+              <div
+                className='relative w-full cursor-zoom-in overflow-hidden pt-[100%]'
+                onMouseMove={(event) => handleZoom(event)}
+                onMouseLeave={() => handleRemoveZoom()}
+              >
+                {/* Để ngăn chặn  event buble  dùng trong con class pointer-events-none  */}
                 <img
-                  className='absolute top-0 left-0 h-full w-full bg-white object-cover'
+                  className='pointer-events-none absolute top-0 left-0 h-full w-full bg-white object-cover'
                   alt={product.name}
-                  src={product.image}
+                  src={currentImage}
+                  ref={imageRef}
                 />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
-                <button className='absolute left-0 top-[50%] z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                <button
+                  className='absolute left-0 top-[50%] z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
+                  onClick={previous}
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -46,16 +132,24 @@ export default function ProductDetail() {
                     <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
                   </svg>
                 </button>
-                {product.images.slice(0, 5).map((img, index) => {
-                  const isActive = index === 0
+                {currentImages.map((img, index) => {
+                  const isActive = currentImage === img
                   return (
-                    <div className='relative w-full pt-[100%]' key={index}>
+                    <div
+                      aria-hidden='true'
+                      onClick={() => chooseActive(img)}
+                      className='relative w-full pt-[100%]'
+                      key={index}
+                    >
                       <img alt='img_product' src={img} className='absolute top-0 left-0 h-full w-full cursor-pointer' />
                       {isActive && <div className='absolute inset-0 border-2 border-orange'></div>}
                     </div>
                   )
                 })}
-                <button className='absolute top-1/2 right-0 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                <button
+                  className='absolute top-1/2 right-0 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
+                  onClick={next}
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -90,33 +184,13 @@ export default function ProductDetail() {
               </div>
               <div className='mt-8 flex items-center'>
                 <div className='capitalize text-gray-500'>Số lượng</div>
-                <div className='ml-10 flex items-center'>
-                  <button className='flex h-11 w-8 items-center justify-center rounded-l-sm border  border-gray-300 text-gray-600'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='h-5 w-5'
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 12h-15' />
-                    </svg>
-                  </button>
-                  <InputNumber value={1} className='h-11 w-12 text-center' />
-                  <button className='flex h-11 w-8 items-center justify-center rounded-l-sm border  border-gray-300 text-gray-600'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='h-5 w-5'
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-                    </svg>
-                  </button>
-                </div>
+                <QuantityController
+                  max={product.quantity}
+                  value={buyCount}
+                  onDecrease={handleBuyCount}
+                  onIncrease={handleBuyCount}
+                  onType={handleBuyCount}
+                />
                 <div className='ml-6 text-sm text-gray-500'>{product.quantity} Sản phẩm có sẵn</div>
               </div>
               <div className='mt-8 flex items-center'>
@@ -154,11 +228,22 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <div className=' bg-white shadow'>
-        <div className='container'>
+
+      <div className='container'>
+        <div className=' bg-white shadow'>
           <div className='rounded bg-gray-50 text-lg capitalize text-slate-700'>Mô tả sản phẩm</div>
           <div className='loading-loose mx-4 mt-12 text-sm'>
-            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize("<div onclick={alert('ha')}>kkk</div>") }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }} />
+          </div>
+        </div>
+      </div>
+      <div className='mt-8'>
+        <div className='container'>
+          <div className='mt-6 grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-6'>
+            {dataproductList &&
+              dataproductList.data.data.products.map((product) => (
+                <ProductItemComponent key={product._id} product={product} />
+              ))}
           </div>
         </div>
       </div>

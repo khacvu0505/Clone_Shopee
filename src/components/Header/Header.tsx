@@ -1,12 +1,29 @@
 import React from 'react'
 import Popover from 'src/components/Popover'
 import { useMutation } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { logout } from 'src/api/auth.api'
 import { AppContext } from 'src/contexts/app.context'
 import { path } from 'src/constant/path'
+import useQueryConfig from 'src/hooks/useQueryConfig'
+import { useForm } from 'react-hook-form'
+import { Schema, schema } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { omit } from 'lodash'
+
+type FormData = Pick<Schema, 'name'>
+
+const nameSchema = schema.pick(['name'])
 
 export default function Header() {
+  const queryConfig = useQueryConfig()
+  const navigate = useNavigate()
+
+  const { handleSubmit, register } = useForm<FormData>({
+    resolver: yupResolver(nameSchema),
+    defaultValues: { name: '' }
+  })
+
   const { isAuthenticated, setIsAuthenticated, profile, setProfile } = React.useContext(AppContext)
 
   // Mutations
@@ -22,6 +39,17 @@ export default function Header() {
       }
     })
   }
+
+  const onSubmitSearch = handleSubmit((data) => {
+    const config = queryConfig.order
+      ? omit({ ...queryConfig, name: data.name }, ['order', 'sort_by'])
+      : { ...queryConfig, name: data.name }
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(config).toString()
+    })
+  })
+
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2'>
       <div className='container'>
@@ -112,13 +140,13 @@ export default function Header() {
               </g>
             </svg>
           </Link>
-          <form className='col-span-9'>
+          <form className='col-span-9' onSubmit={onSubmitSearch}>
             <div className='flex rounded-sm bg-white p-1'>
               <input
                 type='text'
-                name='search'
                 className='text-blackpx-3 flex-grow border-none bg-transparent py-2 outline-none'
                 placeholder='Freeship đơn từ 0Đ'
+                {...register('name')}
               />
               <button className='flex-shrink-0 rounded-sm bg-orange py-2 px-6 hover:opacity-90'>
                 <svg

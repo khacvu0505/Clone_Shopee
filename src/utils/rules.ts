@@ -103,7 +103,8 @@ export const schema = yup
 
         return true
       }
-    })
+    }),
+    name: yup.string().trim().required('Tên sản phẩm là bắt buộc')
   })
   .required()
 

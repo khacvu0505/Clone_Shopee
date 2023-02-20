@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react'
-import { QueryConfig } from '../../ProductList'
+
 import { SortBy, Order } from 'src/constant/product'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { path } from 'src/constant/path'
 import { omit } from 'lodash'
+import { QueryConfig } from 'src/hooks/useQueryConfig'
 
 interface SortProductListProps {
   pageSize: number
