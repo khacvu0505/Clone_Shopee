@@ -25,7 +25,8 @@ import { path } from 'src/constant/path'
 //   password: string
 //   confirm_password: string
 // }
-type IFormInput = Schema
+type IFormInput = Pick<Schema, 'email' | 'password' | 'confirm_password'>
+const loginSchema = schema.pick(['email', 'password', 'confirm_password'])
 
 export default function Register() {
   const navigate = useNavigate()
@@ -39,7 +40,7 @@ export default function Register() {
     setError,
     formState: { errors }
   } = useForm<IFormInput>({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(loginSchema)
   })
 
   // const rules = getRules(getValues)

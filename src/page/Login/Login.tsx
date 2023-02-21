@@ -18,8 +18,10 @@ import { path } from 'src/constant/path'
 //   email: string
 //   password: string
 // }
-type IFormInput = Omit<Schema, 'confirm_password'>
-const loginSchema = schema.omit(['confirm_password'])
+type IFormInput = Pick<Schema, 'email' | 'password'>
+
+const loginSchema = schema.pick(['email', 'password'])
+// const loginSchema = schema.omit(['confirm_password'])
 export default function Login() {
   const { setIsAuthenticated, setProfile } = React.useContext(AppContext)
   const navigate = useNavigate()
@@ -38,7 +40,7 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: (body: IFormInput) => login(body)
   })
-
+  console.log('errors', errors)
   // handleSubmitForm
   const onSubmit: SubmitHandler<IFormInput> = (body) => {
     loginMutation.mutate(body, {
