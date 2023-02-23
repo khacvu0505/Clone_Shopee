@@ -11,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { isEmpty, omit } from 'lodash'
 import RatingStar from '../RatingStar'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
+import InputV2 from 'src/components/InputV2'
 
 const priceSchema = schema.pick(['price_min', 'price_max'])
 interface AsideFilterProps {
@@ -129,7 +130,7 @@ export default function AsideFilter(props: AsideFilterProps) {
           <div>Khoảng giá</div>
           <form className='mt-2' onSubmit={handleSubmit(onSubmit)}>
             <div className='flex items-start'>
-              <Controller
+              {/* <Controller
                 control={control}
                 name='price_min'
                 render={({ field }) => (
@@ -143,7 +144,8 @@ export default function AsideFilter(props: AsideFilterProps) {
                     ref={field.ref}
                   />
                 )}
-              />
+              /> */}
+              <InputV2 name='price_min' control={control} type='number' placeholder='Từ' />
 
               <div className='mx-2 mt-2 shrink-0'>-</div>
               <Controller

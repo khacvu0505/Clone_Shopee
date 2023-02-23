@@ -1,6 +1,6 @@
 import React from 'react'
 import Popover from 'src/components/Popover'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { logout } from 'src/api/auth.api'
 import { AppContext } from 'src/contexts/app.context'
@@ -10,14 +10,20 @@ import { useForm } from 'react-hook-form'
 import { Schema, schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { omit } from 'lodash'
+import { PurchaseStatus } from 'src/constant/purchase'
+import { getPurchaseList } from 'src/api/purchase.api'
+import { formatCurrency } from 'src/utils/utils'
+import { useQueryClientHook } from 'src/hooks/useQueryClient'
 
 type FormData = Pick<Schema, 'name'>
 
 const nameSchema = schema.pick(['name'])
+const MAX_PURCHASES = 5
 
 export default function Header() {
   const queryConfig = useQueryConfig()
   const navigate = useNavigate()
+  const queryClient = useQueryClientHook()
 
   const { handleSubmit, register } = useForm<FormData>({
     resolver: yupResolver(nameSchema),
@@ -31,11 +37,20 @@ export default function Header() {
     mutationFn: () => logout()
   })
 
+  const { data: purchaseInCardData } = useQuery({
+    queryKey: ['purchases', PurchaseStatus.inCart],
+    queryFn: () => getPurchaseList(PurchaseStatus.inCart),
+    enabled: isAuthenticated
+  })
+
+  const purchaseInCard = purchaseInCardData?.data.data ?? []
+
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
         setIsAuthenticated(false)
         setProfile(null)
+        queryClient.removeQueries(['purchases', PurchaseStatus.inCart])
       }
     })
   }
@@ -174,33 +189,40 @@ export default function Header() {
                   <div className='p-2'>
                     <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
                     <div className='mt-5'>
-                      <div className='mt-4 flex items-center'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://cf.shopee.vn/file/aa52e1e71cf673cfdba29b5872b26e53_tn'
-                            alt='img_product'
-                            className='h-11 w-11'
-                          />
-                        </div>
-                        <div className='ml-2 flex-grow overflow-hidden'>
-                          <div className='truncate'>Vali du lịch BAMOZO 8801 vali kéo nhựa được bảo hành 5 năm</div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>469.000</span>
-                        </div>
-                      </div>
+                      {purchaseInCard?.length > 0 ? (
+                        purchaseInCard.slice(0, MAX_PURCHASES)?.map((item) => (
+                          <div className='mt-4 flex items-center py-1 hover:bg-stone-100' key={item._id}>
+                            <div className='flex-shrink-0'>
+                              <img src={item.product.image} alt={item.product.name} className='h-11 w-11' />
+                            </div>
+                            <div className='ml-2 flex-grow overflow-hidden'>
+                              <div className='truncate'>{item.product.name}</div>
+                            </div>
+                            <div className='ml-2 flex-shrink-0'>
+                              <span className='text-orange'>{formatCurrency(item.product.price)}</span>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div>Chưa có sản phẩm</div>
+                      )}
                     </div>
                     <div className='mt-6 flex items-center justify-between'>
-                      <div className='text-xs capitalize text-gray-600'>Thêm vào giỏ hàng</div>
-                      <button className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-90'>
+                      <div className='text-xs capitalize text-gray-600'>
+                        {purchaseInCard.length > 5 ? purchaseInCard.length - MAX_PURCHASES : ' '} Thêm vào giỏ hàng
+                      </div>
+                      <Link
+                        to={path.cart}
+                        className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-90'
+                      >
                         Xem giỏ hàng
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
               }
             >
-              <Link to='/'>
+              <Link to='/' className='relative'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -215,6 +237,11 @@ export default function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                   />
                 </svg>
+                {purchaseInCard.length > 0 && (
+                  <span className='absolute left-[17px] top-[-14px] rounded-full bg-white px-2 py-1 text-orange'>
+                    {purchaseInCard.length}
+                  </span>
+                )}
               </Link>
             </Popover>
           </div>

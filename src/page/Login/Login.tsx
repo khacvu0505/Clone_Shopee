@@ -40,7 +40,6 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: (body: IFormInput) => login(body)
   })
-  console.log('errors', errors)
   // handleSubmitForm
   const onSubmit: SubmitHandler<IFormInput> = (body) => {
     loginMutation.mutate(body, {

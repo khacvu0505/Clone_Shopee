@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { getProductDetail, getProductList } from 'src/api/product.api'
 import InputNumber from 'src/components/InputNumber'
@@ -9,10 +9,15 @@ import DOMPurify from 'isomorphic-dompurify'
 import { Product, ProductListConfig } from 'src/types/product.type'
 import ProductItemComponent from '../ProductList/components/Product'
 import QuantityController from 'src/components/QuantityController'
+import { addToCart } from 'src/api/purchase.api'
+import { useQueryClientHook } from 'src/hooks/useQueryClient'
+import { PurchaseStatus } from 'src/constant/purchase'
+import { toast } from 'react-toastify'
 
 export default function ProductDetail() {
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
+  const queryClient = useQueryClientHook()
 
   const [buyCount, setBuyCount] = useState(1)
 
@@ -33,7 +38,16 @@ export default function ProductDetail() {
     staleTime: 3 * 60 * 1000
   })
 
-  console.log('dataproductList', dataproductList)
+  const addToCartMutation = useMutation({
+    mutationKey: ['addToCart'],
+    mutationFn: (data: { product_id: string; buy_count: number }) => addToCart(data),
+    onSuccess: (data) => {
+      toast.success(data.data.message, {
+        autoClose: 1500
+      })
+      queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
+    }
+  })
 
   const [currentIndexImage, setCurrentIndexImage] = useState([0, 5])
   const [currentImage, setActiveImg] = useState('')
@@ -93,6 +107,10 @@ export default function ProductDetail() {
 
   const handleBuyCount = (value: number) => {
     setBuyCount(value)
+  }
+
+  const handleAddToCart = () => {
+    addToCartMutation.mutate({ buy_count: buyCount, product_id: product?._id as string })
   }
 
   if (!product) return null
@@ -185,16 +203,19 @@ export default function ProductDetail() {
               <div className='mt-8 flex items-center'>
                 <div className='capitalize text-gray-500'>Số lượng</div>
                 <QuantityController
-                  max={product.quantity}
-                  value={buyCount}
-                  onDecrease={handleBuyCount}
-                  onIncrease={handleBuyCount}
-                  onType={handleBuyCount}
+                // max={product.quantity}
+                // value={buyCount}
+                // onDecrease={handleBuyCount}
+                // onIncrease={handleBuyCount}
+                // onType={handleBuyCount}
                 />
                 <div className='ml-6 text-sm text-gray-500'>{product.quantity} Sản phẩm có sẵn</div>
               </div>
               <div className='mt-8 flex items-center'>
-                <button className='flex h-12 items-center justify-center rounded-sm border border-orange bg-orange/10 px-5 text-sm capitalize text-orange hover:bg-orange/5'>
+                <button
+                  onClick={handleAddToCart}
+                  className='flex h-12 items-center justify-center rounded-sm border border-orange bg-orange/10 px-5 text-sm capitalize text-orange hover:bg-orange/5'
+                >
                   <svg
                     enableBackground='new 0 0 15 15'
                     viewBox='0 0 15 15'

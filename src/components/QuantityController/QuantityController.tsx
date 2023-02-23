@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import InputNumber, { InputNumberProps } from '../InputNumber'
 
 interface QuantityProps extends InputNumberProps {
@@ -18,6 +18,8 @@ export default function QuantityController({
   value,
   ...rest
 }: QuantityProps) {
+  const [localValue, setLocalValue] = useState<number>(Number(value || 1))
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = Number(event.target.value)
     if (max !== undefined && value > max) {
@@ -26,21 +28,25 @@ export default function QuantityController({
       value = 1
     }
     onType && onType(value)
+    setLocalValue(value)
   }
 
   const increase = () => {
-    let _value = Number(value) + 1
+    let _value = Number(value || localValue) + 1
+
     if (max !== undefined && _value > max) {
       _value = max
     }
+    setLocalValue(_value)
     onIncrease && onIncrease(_value)
   }
 
   const decrease = () => {
-    let _value = Number(value) - 1
+    let _value = Number(value || localValue) - 1
     if (_value <= 1) {
       _value = 1
     }
+    setLocalValue(_value)
     onDecrease && onDecrease(_value)
   }
 
@@ -61,7 +67,12 @@ export default function QuantityController({
           <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 12h-15' />
         </svg>
       </button>
-      <InputNumber className='h-11  w-[100px] text-center' onChange={handleChange} value={value} {...rest} />
+      <InputNumber
+        className='h-11  w-[100px] text-center'
+        onChange={handleChange}
+        value={value || localValue}
+        {...rest}
+      />
       <button
         onClick={increase}
         className='flex h-11 w-8 items-center justify-center rounded-l-sm border  border-gray-300 text-gray-600'
