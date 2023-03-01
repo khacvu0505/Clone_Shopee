@@ -2,8 +2,11 @@ export const path = {
   home: '/',
   register: '/register',
   login: '/login',
-  profile: '/profile',
+  profile: '/user/profile',
+  changePassword: '/user/password',
+  historyPurchase: '/user/purchase',
   logout: '/logout',
   detail: '/product-detail/:nameId',
-  cart: '/cart'
+  cart: '/cart',
+  user: '/user'
 }

@@ -10,6 +10,10 @@ import { path } from 'src/constant/path'
 import ProductDetail from './page/ProductDetail'
 import Cart from './page/Cart'
 import CartLayout from './layout/CartLayout'
+import Profile from './page/Profile'
+import UserLayout from './page/User/layout/UserLayout'
+import ChangePassword from './page/User/pages/ChangePassword'
+import HistoryPurchase from './page/User/pages/HistoryPurchase'
 
 function ProtectedRoute() {
   const { isAuthenticated } = React.useContext(AppContext)
@@ -24,17 +28,45 @@ function RejectedRoute() {
 export default function useRouteElement() {
   const routeElement = useRoutes([
     {
-      path: '',
+      path: path.user,
       element: <ProtectedRoute />,
       children: [
         {
           path: path.profile,
           element: (
             <MainLayout>
-              <ProductList />
+              <UserLayout>
+                <Profile />
+              </UserLayout>
             </MainLayout>
           )
         },
+        {
+          path: path.changePassword,
+          element: (
+            <MainLayout>
+              <UserLayout>
+                <ChangePassword />
+              </UserLayout>
+            </MainLayout>
+          )
+        },
+        {
+          path: path.historyPurchase,
+          element: (
+            <MainLayout>
+              <UserLayout>
+                <HistoryPurchase />
+              </UserLayout>
+            </MainLayout>
+          )
+        }
+      ]
+    },
+    {
+      path: '',
+      element: <ProtectedRoute />,
+      children: [
         {
           path: path.cart,
           element: (

@@ -72,7 +72,7 @@ export default function NavHeader() {
           className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'
           renderPopover={
             <div className='rounded-sm border border-gray-200 shadow-md'>
-              <Link to='/' className='block bg-white py-3 px-4 hover:bg-slate-100 hover:text-cyan-500'>
+              <Link to={path.profile} className='block bg-white py-3 px-4 hover:bg-slate-100 hover:text-cyan-500'>
                 Tài khoản của tôi
               </Link>
               <Link to='/' className='block bg-white py-3 px-4 hover:bg-slate-100 hover:text-cyan-500'>
