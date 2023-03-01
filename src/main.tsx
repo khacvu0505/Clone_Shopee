@@ -12,7 +12,8 @@ export const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       staleTime: 2 * 60 * 1000,
-      cacheTime: 5 * 60 * 1000
+      cacheTime: 5 * 60 * 1000,
+      retry:0
     }
   }
 })

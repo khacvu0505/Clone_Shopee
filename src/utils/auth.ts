@@ -7,6 +7,8 @@ export const saveAccessTokenToLocalStorage = (access_token: string) => {
 export const clearAccessTokenFromLocalStorage = () => {
   localStorage.removeItem('access_token')
   localStorage.removeItem('profile')
+  const clearLocalStorageEvent = new Event('clearLocalStorage')
+  localStorageEventTarget.dispatchEvent(clearLocalStorageEvent)
 }
 
 export const getAccessTokenFromLocalStorage = () => {
@@ -22,3 +24,6 @@ export const getProfile = () => {
 export const setProfile = (profile: User) => {
   localStorage.setItem('profile', JSON.stringify(profile))
 }
+
+// Chỗ này là lắng nghe 1 sự kiện nào đấy
+export const localStorageEventTarget = new EventTarget()

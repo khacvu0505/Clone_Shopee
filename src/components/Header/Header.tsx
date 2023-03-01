@@ -1,41 +1,21 @@
 import React from 'react'
 import Popover from 'src/components/Popover'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { Link, createSearchParams, useNavigate } from 'react-router-dom'
-import { logout } from 'src/api/auth.api'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 import { AppContext } from 'src/contexts/app.context'
 import { path } from 'src/constant/path'
-import useQueryConfig from 'src/hooks/useQueryConfig'
-import { useForm } from 'react-hook-form'
-import { Schema, schema } from 'src/utils/rules'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { omit } from 'lodash'
 import { PurchaseStatus } from 'src/constant/purchase'
 import { getPurchaseList } from 'src/api/purchase.api'
 import { formatCurrency } from 'src/utils/utils'
-import { useQueryClientHook } from 'src/hooks/useQueryClient'
+import NavHeader from '../NavHeader'
+import useSearchProduct from 'src/hooks/useSearchProduct'
 
-type FormData = Pick<Schema, 'name'>
-
-const nameSchema = schema.pick(['name'])
 const MAX_PURCHASES = 5
 
 export default function Header() {
-  const queryConfig = useQueryConfig()
-  const navigate = useNavigate()
-  const queryClient = useQueryClientHook()
+  const { onSubmitSearch, register } = useSearchProduct()
 
-  const { handleSubmit, register } = useForm<FormData>({
-    resolver: yupResolver(nameSchema),
-    defaultValues: { name: '' }
-  })
-
-  const { isAuthenticated, setIsAuthenticated, profile, setProfile } = React.useContext(AppContext)
-
-  // Mutations
-  const logoutMutation = useMutation({
-    mutationFn: () => logout()
-  })
+  const { isAuthenticated } = React.useContext(AppContext)
 
   const { data: purchaseInCardData } = useQuery({
     queryKey: ['purchases', PurchaseStatus.inCart],
@@ -45,108 +25,10 @@ export default function Header() {
 
   const purchaseInCard = purchaseInCardData?.data.data ?? []
 
-  const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        setIsAuthenticated(false)
-        setProfile(null)
-        queryClient.removeQueries(['purchases', PurchaseStatus.inCart])
-      }
-    })
-  }
-
-  const onSubmitSearch = handleSubmit((data) => {
-    const config = queryConfig.order
-      ? omit({ ...queryConfig, name: data.name }, ['order', 'sort_by'])
-      : { ...queryConfig, name: data.name }
-    navigate({
-      pathname: path.home,
-      search: createSearchParams(config).toString()
-    })
-  })
-
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2'>
       <div className='container'>
-        <div className='flex justify-end text-white'>
-          <Popover
-            numberOffset={6}
-            className='flex cursor-pointer items-center py-1 hover:text-gray-300'
-            renderPopover={
-              <div className='relative rounded-sm border-gray-200 bg-white shadow-sm'>
-                <div className='flex flex-col py-2 pr-20 pl-3'>
-                  <button className='py-1 px-3 hover:text-orange'>Tiếng Việt</button>
-                  <button className='mt-2 py-1 px-3 hover:text-orange'>Tiếng Anh</button>
-                </div>
-              </div>
-            }
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth='1.5'
-              stroke='currentColor'
-              className='h-5 w-5'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418'
-              />
-            </svg>
-            <span className='mx-1'>Tiếng Việt</span>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth='1.5'
-              stroke='currentColor'
-              className='h-6 w-6'
-            >
-              <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' />
-            </svg>
-          </Popover>
-          {isAuthenticated ? (
-            <Popover
-              className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'
-              renderPopover={
-                <div className='rounded-sm border border-gray-200 shadow-md'>
-                  <Link to='/' className='block bg-white py-3 px-4 hover:bg-slate-100 hover:text-cyan-500'>
-                    Tài khoản của tôi
-                  </Link>
-                  <Link to='/' className='block bg-white py-3 px-4 hover:bg-slate-100 hover:text-cyan-500'>
-                    Đơn mua
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className='block w-full bg-white py-3 px-4 text-left hover:bg-slate-100 hover:text-cyan-500'
-                  >
-                    Đăng xuất
-                  </button>
-                </div>
-              }
-            >
-              <div className='m-5 h-5 flex-shrink-0'>
-                <img
-                  src='https://i1.sndcdn.com/avatars-000715955569-knzo3k-t500x500.jpg'
-                  alt='avatar'
-                  className='h-7 w-7 rounded-full object-cover'
-                />
-              </div>
-              <div>{profile?.email}</div>
-            </Popover>
-          ) : (
-            <div className='ml-4 flex items-center'>
-              <Link to={path.register} className='text-sm italic underline'>
-                Đăng ký
-              </Link>
-              <Link to={path.login} className='ml-3 text-sm italic underline'>
-                Đăng nhập
-              </Link>
-            </div>
-          )}
-        </div>
+        <NavHeader />
         <div className='mt-4 grid grid-cols-12 items-center gap-4'>
           <Link to='/' className='col-span-2'>
             <svg viewBox='0 0 192 65' className='h-11 w-full fill-white '>

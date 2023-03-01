@@ -16,6 +16,10 @@ export interface Purchase {
   product: Product
 }
 
+export interface ExtendedPurchases extends Purchase {
+  checked: boolean
+}
+
 export interface ProductAddToPurchase {
   product_id: string
   buy_count: number
