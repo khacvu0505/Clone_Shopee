@@ -7,9 +7,11 @@ import { PurchaseStatus } from 'src/constant/purchase'
 import { logout } from 'src/api/auth.api'
 import { useQueryClientHook } from 'src/hooks/useQueryClient'
 import { useMutation } from '@tanstack/react-query'
+import userImg from 'src/images/userImg.jpg'
+import { getUrlAvatar } from 'src/utils/utils'
 
 export default function NavHeader() {
-  const { isAuthenticated, setIsAuthenticated, profile, setProfile } = React.useContext(AppContext)
+  const { isAuthenticated, profile } = React.useContext(AppContext)
   const queryClient = useQueryClientHook()
 
   // Mutations
@@ -23,6 +25,7 @@ export default function NavHeader() {
         // setIsAuthenticated(false)
         // setProfile(null)
         queryClient.removeQueries(['purchases', PurchaseStatus.inCart])
+        queryClient.removeQueries(['profile'])
       }
     })
   }
@@ -89,7 +92,7 @@ export default function NavHeader() {
         >
           <div className='m-5 h-5 flex-shrink-0'>
             <img
-              src='https://i1.sndcdn.com/avatars-000715955569-knzo3k-t500x500.jpg'
+              src={profile?.avatar ? getUrlAvatar(profile?.avatar) : userImg}
               alt='avatar'
               className='h-7 w-7 rounded-full object-cover'
             />

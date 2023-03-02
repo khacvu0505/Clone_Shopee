@@ -3,6 +3,15 @@ import * as yup from 'yup'
 
 type Rules = { [key in 'email' | 'password' | 'confirm_password']?: RegisterOptions }
 
+const handleConfirmPassword = (refField: string) => {
+  return yup
+    .string()
+    .required('Confirm Password là bắt buộc')
+    .min(6, 'Độ dài từ 6 - 160 ký tự')
+    .max(160, 'Độ dài từ 160 - 160 ký tự')
+    .oneOf([yup.ref(refField), null], 'Confirm Password phải trùng với Password')
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getRules = (getValues?: UseFormGetValues<any>): Rules => ({
   email: {
@@ -70,12 +79,7 @@ export const schema = yup
       .required('Password là bắt buộc')
       .min(6, 'Độ dài từ 6 - 160 ký tự')
       .max(160, 'Độ dài từ 160 - 160 ký tự'),
-    confirm_password: yup
-      .string()
-      .required('Confirm Password là bắt buộc')
-      .min(6, 'Độ dài từ 6 - 160 ký tự')
-      .max(160, 'Độ dài từ 160 - 160 ký tự')
-      .oneOf([yup.ref('password'), null], 'Confirm Password phải trùng với Password'),
+    confirm_password: handleConfirmPassword('password'),
     price_min: yup.string().test({
       name: 'price-not-allowed',
       message: 'Giá không phù hợp',
@@ -108,4 +112,21 @@ export const schema = yup
   })
   .required()
 
+export const userSchema = yup.object({
+  name: yup.string().max(160, 'Độ dài tối đa là 160 ký tự'),
+  phone: yup.string().max(20, 'Độ dài tối đa là 20 ký tự'),
+  address: yup.string().max(160, 'Độ dài tối đa là 160 ký tự'),
+  date_of_birth: yup.date().max(new Date(), 'Hãy chọn một ngày trong quá khứ'),
+  new_password: yup
+    .string()
+    .required('Password là bắt buộc')
+    .min(6, 'Độ dài từ 6 - 160 ký tự')
+    .max(160, 'Độ dài từ 160 - 160 ký tự'),
+  password: schema.fields['password'],
+  confirm_password: handleConfirmPassword('new_password'),
+  avatar: yup.string().max(1000, 'Độ dài tối đa là 1000 ký tự')
+})
+
 export type Schema = yup.InferType<typeof schema>
+
+export type UserSchema = yup.InferType<typeof userSchema>

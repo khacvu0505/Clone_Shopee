@@ -10,10 +10,11 @@ import { path } from 'src/constant/path'
 import ProductDetail from './page/ProductDetail'
 import Cart from './page/Cart'
 import CartLayout from './layout/CartLayout'
-import Profile from './page/Profile'
 import UserLayout from './page/User/layout/UserLayout'
 import ChangePassword from './page/User/pages/ChangePassword'
 import HistoryPurchase from './page/User/pages/HistoryPurchase'
+import Profile from './page/User/pages/Profile'
+import PageNotFound from './page/PageNotFound'
 
 function ProtectedRoute() {
   const { isAuthenticated } = React.useContext(AppContext)
@@ -113,6 +114,14 @@ export default function useRouteElement() {
       element: (
         <MainLayout>
           <ProductDetail />
+        </MainLayout>
+      )
+    },
+    {
+      path: '*',
+      element: (
+        <MainLayout>
+          <PageNotFound />
         </MainLayout>
       )
     }

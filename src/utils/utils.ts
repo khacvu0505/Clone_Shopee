@@ -39,3 +39,7 @@ export const getIdFromNameId = (nameId: string) => {
   const arr = nameId.split('--i-')
   return arr[arr.length - 1]
 }
+
+export const getUrlAvatar = (url: string) => {
+  return `https://api-ecom.duthanhduoc.com/images/${url}`
+}
