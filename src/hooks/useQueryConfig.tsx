@@ -1,7 +1,8 @@
-import React from 'react'
 import useQueryParams from './useQueryParams'
 // import { QueryConfig } from 'src/page/ProductList/ProductList'
-import { isUndefined, omitBy } from 'lodash'
+import isUndefined from 'lodash/isUndefined'
+import omitBy from 'lodash/omitBy'
+
 import { ProductListConfig } from 'src/types/product.type'
 
 export type QueryConfig = {

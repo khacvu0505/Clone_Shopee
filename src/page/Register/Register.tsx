@@ -11,7 +11,8 @@ import { useMutation } from '@tanstack/react-query'
 import { registerAccount } from 'src/api/auth.api'
 
 // Lodash
-import { omit } from 'lodash'
+// import { omit } from 'lodash'
+import omit from 'lodash/omit'
 
 // Utils
 import { isAxiosUnprocessableEntity } from 'src/utils/utils'
