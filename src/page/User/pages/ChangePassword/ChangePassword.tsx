@@ -5,13 +5,7 @@ import { UserSchema, userSchema } from 'src/utils/rules'
 import { useMutation } from '@tanstack/react-query'
 import { updateProfile } from 'src/api/user.api'
 import { toast } from 'react-toastify'
-
-// Không có tính năng tree-sharking
-// import { omit } from 'lodash'
-
-// Chỉ import mỗi function omit
-import omit from 'lodash/omit'
-
+import { omit } from 'lodash'
 import { isAxiosUnprocessableEntity } from 'src/utils/utils'
 import { ErrorResponse } from 'src/types/utils.type'
 import Input from 'src/components/Input'
