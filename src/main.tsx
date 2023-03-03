@@ -7,13 +7,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import AppProvider from './contexts/app.context'
 
+// i18next
+import './i18n/i18n'
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       staleTime: 2 * 60 * 1000,
       cacheTime: 5 * 60 * 1000,
-      retry:0
+      retry: 0
     }
   }
 })

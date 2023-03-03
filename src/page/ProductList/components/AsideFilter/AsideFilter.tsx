@@ -12,6 +12,7 @@ import { isEmpty, omit } from 'lodash'
 import RatingStar from '../RatingStar'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
 import InputV2 from 'src/components/InputV2'
+import { useTranslation } from 'react-i18next'
 
 const priceSchema = schema.pick(['price_min', 'price_max'])
 interface AsideFilterProps {
@@ -27,6 +28,7 @@ type FormData = Pick<Schema, 'price_min' | 'price_max'>
 
 export default function AsideFilter(props: AsideFilterProps) {
   const { dataCategory = [], queryConfig } = props
+  const { t } = useTranslation(['home', 'product'])
   const {
     control,
     handleSubmit,
@@ -85,7 +87,7 @@ export default function AsideFilter(props: AsideFilterProps) {
             </g>
           </g>
         </svg>
-        Tất cả danh mục
+        {t('aside filter.all categories')}
       </Link>
       <div className='my-4'>
         <ul>
@@ -123,7 +125,7 @@ export default function AsideFilter(props: AsideFilterProps) {
               />
             </g>
           </svg>
-          Bộ lọc tìm kiếm
+          {t('aside filter.filter search')}
         </Link>
         <div className='my-4 h-[1px] bg-gray-300' />
         <div className='my-5'>

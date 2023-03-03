@@ -14,12 +14,14 @@ import { useQueryClientHook } from 'src/hooks/useQueryClient'
 import { PurchaseStatus } from 'src/constant/purchase'
 import { toast } from 'react-toastify'
 import { path } from 'src/constant/path'
+import { useTranslation } from 'react-i18next'
 
 export default function ProductDetail() {
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
   const queryClient = useQueryClientHook()
   const navigate = useNavigate()
+  const { t } = useTranslation(['product'])
 
   const [buyCount, setBuyCount] = useState(1)
 
@@ -232,7 +234,9 @@ export default function ProductDetail() {
                 // onIncrease={handleBuyCount}
                 // onType={handleBuyCount}
                 />
-                <div className='ml-6 text-sm text-gray-500'>{product.quantity} Sản phẩm có sẵn</div>
+                <div className='ml-6 text-sm text-gray-500'>
+                  {product.quantity} {t('product:available')}
+                </div>
               </div>
               <div className='mt-8 flex items-center'>
                 <button
