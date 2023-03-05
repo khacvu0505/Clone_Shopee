@@ -9,7 +9,7 @@ export default function RegisterHeader() {
     <header className='py-5'>
       <div className='container'>
         <nav className='flex items-end'>
-          <Link to={path.home}>
+          <Link to={path.home} className='flex items-center'>
             <div>
               <svg viewBox='0 0 192 65' className='h-8 fill-orange lg:h-11 '>
                 <g fillRule='evenodd'>
@@ -17,7 +17,7 @@ export default function RegisterHeader() {
                 </g>
               </svg>
             </div>
-            <div className='ml-5 text-xl lg:text-2xl'>{isRegisterMatch ? 'Đăng kí' : 'Đăng nhập'} </div>
+            <div className='ml-5 mt-3 text-xl lg:text-2xl'>{isRegisterMatch ? 'Đăng kí' : 'Đăng nhập'} </div>
           </Link>
         </nav>
       </div>

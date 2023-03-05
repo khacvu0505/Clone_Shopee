@@ -41,7 +41,7 @@ export default function Input<Data extends FieldValues>({
         // type={type}
         // placeholder={placeholder}
         {...rest}
-        className='w-full rounded-sm border border-gray-300 p-3 focus:border-gray-500 focus:shadow-sm'
+        className={`w-full rounded-sm border border-gray-300 p-3 focus:border-gray-500 focus:shadow-sm ${className}`}
         // className={className}
         // {...register(name, rules)}
         {...registerResult}

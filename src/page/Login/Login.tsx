@@ -73,7 +73,7 @@ export default function Login() {
               <div className='text-2xl'>Đăng Nhập</div>
               <Input
                 name='email'
-                className='mt-8'
+                className='email-input mt-8'
                 type='email'
                 placeholder='Email'
                 register={register}
@@ -89,6 +89,7 @@ export default function Login() {
               />
               <div className='mt-3'>
                 <Button
+                  id='btn-submit-login'
                   isLoading={loginMutation.isLoading}
                   className={`w-full rounded-sm bg-red-500 py-4 px-2 text-center uppercase text-white hover:bg-red-600`}
                 >

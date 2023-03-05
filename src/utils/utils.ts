@@ -55,3 +55,14 @@ export const getIdFromNameId = (nameId: string) => {
 export const getUrlAvatar = (url: string) => {
   return `https://api-ecom.duthanhduoc.com/images/${url}`
 }
+
+export const demo = (value: number) => {
+  let number = 0
+  if (value < 10) {
+    number++
+  }
+  if (value % 2 === 0) {
+    number++
+  }
+  return number
+}

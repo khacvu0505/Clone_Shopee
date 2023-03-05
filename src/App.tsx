@@ -4,7 +4,21 @@ import useRouteElement from './useRouteElement'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { localStorageEventTarget } from './utils/auth'
-import { AppContext } from './contexts/app.context'
+import AppProvider, { AppContext } from './contexts/app.context'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import ErrorBoundary from './components/ErrorBoundary'
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 2 * 60 * 1000,
+      cacheTime: 5 * 60 * 1000,
+      retry: 0
+    }
+  }
+})
 
 function App() {
   const element = useRouteElement()
@@ -18,10 +32,15 @@ function App() {
   }, [reset])
 
   return (
-    <div>
-      {element}
-      <ToastContainer limit={1} />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <AppProvider>
+        <ErrorBoundary>
+          {element}
+          <ToastContainer limit={1} />
+        </ErrorBoundary>
+      </AppProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 

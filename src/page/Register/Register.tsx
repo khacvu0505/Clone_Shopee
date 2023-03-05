@@ -118,7 +118,7 @@ export default function Register() {
                 </Button>
               </div>
               <div className='mt-8 flex items-center justify-center'>
-                <span className='text-gray-300'>Bạn đã có tài khoản?</span>
+                <span className='text-gray-300'>Bạn đã có tài khoản chưa?</span>
                 <Link to='/login' className='ml-1 decoration-slice italic text-red-400 underline'>
                   Đăng nhập
                 </Link>

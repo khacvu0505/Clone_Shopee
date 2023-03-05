@@ -14,7 +14,7 @@ import { locales } from 'src/i18n/i18n'
 
 // type typeLocales = 'vn' | 'en'
 export default function NavHeader() {
-  const { isAuthenticated, profile } = React.useContext(AppContext)
+  const { isAuthenticated, setIsAuthenticated, profile, setProfile } = React.useContext(AppContext)
   const queryClient = useQueryClientHook()
 
   const { i18n } = useTranslation()
@@ -28,8 +28,8 @@ export default function NavHeader() {
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
-        // setIsAuthenticated(false)
-        // setProfile(null)
+        setIsAuthenticated(false)
+        setProfile(null)
         queryClient.removeQueries(['purchases', PurchaseStatus.inCart])
         queryClient.removeQueries(['profile'])
       }
