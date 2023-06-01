@@ -50,7 +50,7 @@ export default function ProductList() {
   })
 
   return (
-    <div className='bg-gray-200 py-6'>
+    <div className='min-w-[1100px] bg-gray-200 py-6'>
       <title>Trang chủ |Shopee Clone</title>
       <div className='container'>
         <div className='grid grid-cols-12 gap-6'>
@@ -60,7 +60,7 @@ export default function ProductList() {
           <div className='col-span-9'>
             <SortProductList queryConfig={queryConfig} pageSize={Number(productList?.data.data.pagination.page_size)} />
 
-            <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4'>
+            <div className='mt-6 grid grid-cols-3 gap-3 md:grid-cols-3 lg:grid-cols-4'>
               {productList &&
                 productList.data.data.products.map((product) => <Product key={product._id} product={product} />)}
             </div>

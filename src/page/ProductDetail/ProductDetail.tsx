@@ -141,7 +141,7 @@ export default function ProductDetail() {
   if (!product) return null
 
   return (
-    <div className='bg-gray-200'>
+    <div className='min-w-[1100px] bg-gray-200'>
       <div className='container'>
         <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>
@@ -211,10 +211,10 @@ export default function ProductDetail() {
               <div className='mt-8 flex items-center'>
                 <div className='flex items-center'>
                   <span className='mr-1 border-b border-orange text-orange'>{product.rating}</span>
-                  <ProductRating rating={product.rating} color='red' />
-                  <div className='mx-4 h-4 bg-gray-300'>
+                  <ProductRating rating={product.rating} />
+                  <div className='mx-4 h-4'>
                     <span>{formatNumberToSocialStyle(product.sold)}</span>
-                    <span className='ml-1 text-gray-500'>Đã bán</span>
+                    <span className='ml-1'>Đã bán</span>
                   </div>
                 </div>
               </div>

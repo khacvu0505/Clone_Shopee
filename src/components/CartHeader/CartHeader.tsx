@@ -6,13 +6,13 @@ import useSearchProduct from 'src/hooks/useSearchProduct'
 export default function CartHeader() {
   const { register, onSubmitSearch } = useSearchProduct()
   return (
-    <div className='border-b border-b-black/10'>
+    <div className=' border-b border-b-black/10'>
       <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
         <div className='container'>
           <NavHeader />
         </div>
-        <div className='bg-white py-6'>
-          <div className='container items-center justify-between md:flex'>
+        <div className='min-w-[1100px] bg-white py-6'>
+          <div className='container flex items-center justify-between'>
             <div className='flex items-end'>
               <Link to='/'>
                 <div>

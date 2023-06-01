@@ -160,9 +160,9 @@ export default function Cart() {
   }
 
   return (
-    <div className='bg-neutral-100 py-16'>
+    <div className='min-w-[1100px] bg-neutral-100 py-16'>
       {extendedPurchases.length > 0 ? (
-        <>
+        <div className='min-w-[1100px]'>
           <div className='overflow-auto'>
             <div className='min-w-[1000px]'>
               <div className='grid grid-cols-12 rounded-sm bg-white py-5 px-9 text-sm capitalize text-gray-500 shadow'>
@@ -192,45 +192,44 @@ export default function Cart() {
                 {extendedPurchases?.map((item, index: number) => (
                   <div
                     key={item._id}
-                    className='mt-3 grid grid-cols-12 items-center rounded-sm border border-gray-200 bg-white py-5 px-4 text-center text-sm text-gray-500'
+                    className='mt-3 grid items-center rounded-sm border border-gray-200 bg-white py-5 px-4 text-center text-sm text-gray-500'
                   >
-                    <div className='col-span-6'>
-                      <div className='flex items-center'>
-                        <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-                          <input
-                            type='checkbox'
-                            className='h-5 w-5 accent-orange'
-                            checked={item.checked}
-                            onChange={handleCheck(index)}
-                          />
-                        </div>
-                        <div className='flex-grow items-center'>
-                          <div className='flex items-center'>
+                    <div className='flex items-center'>
+                      <div className='flex flex-shrink-0 items-center justify-center pr-3'>
+                        <input
+                          type='checkbox'
+                          className='h-5 w-5 accent-orange'
+                          checked={item.checked}
+                          onChange={handleCheck(index)}
+                        />
+                      </div>
+                      <div className='flex-grow items-center'>
+                        <div className='flex items-center'>
+                          <Link
+                            to={`/product-detail/${generateNameId({
+                              name: item.product.name,
+                              id: item.product._id
+                            })}`}
+                            className='h-20 w-20 flex-shrink-0'
+                          >
+                            <img alt={item.product.name} src={item.product.image} />
+                          </Link>
+                          <div className='flex-grow px-2 pt-1 pb-2 text-left'>
                             <Link
                               to={`/product-detail/${generateNameId({
                                 name: item.product.name,
                                 id: item.product._id
                               })}`}
-                              className='h-20 w-20 flex-shrink-0'
+                              className='line-clamp-2'
                             >
-                              <img alt={item.product.name} src={item.product.image} />
+                              {item.product.name}
                             </Link>
-                            <div className='flex-grow px-2 pt-1 pb-2 text-left'>
-                              <Link
-                                to={`/product-detail/${generateNameId({
-                                  name: item.product.name,
-                                  id: item.product._id
-                                })}`}
-                                className='line-clamp-2'
-                              >
-                                {item.product.name}
-                              </Link>
-                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className='col-span-6'>
+
+                    <div>
                       <div className='grid grid-cols-5 items-center'>
                         <div className='col-span-2'>
                           <div className='flex items-center justify-center'>
@@ -278,7 +277,7 @@ export default function Cart() {
               </div>
             </div>
           </div>
-          <div className='sticky bottom-0 z-10 flex flex-col rounded-sm bg-white p-5 sm:flex-row sm:items-center'>
+          <div className='flex min-w-[1100px] justify-between rounded-sm bg-white p-5'>
             <div className='flex items-center'>
               <div className='flex flex-shrink-0 items-center justify-center pr-3'>
                 <input
@@ -295,8 +294,7 @@ export default function Cart() {
                 Xóa
               </button>
             </div>
-
-            <div className='mt-5 sm:ml-auto sm:mt-0'>
+            <div className='mt-5  sm:mt-0'>
               <div className='flex items-center'>
                 <div>Tổng thanh toán ({listProductChoose.length} sản phẩm)</div>
                 <div className='ml-2 text-2xl text-orange'>{formatCurrency(totalCheckedPurchasePrice)}</div>
@@ -316,7 +314,7 @@ export default function Cart() {
               Mua hàng
             </Button>
           </div>
-        </>
+        </div>
       ) : (
         <div className='2 container rounded-sm bg-white py-5 px-9 text-sm capitalize text-gray-500 shadow'>
           Hiện chưa có sản phẩm trong giỏ hàng

@@ -26,7 +26,7 @@ export default function Header() {
   const purchaseInCard = purchaseInCardData?.data.data ?? []
 
   return (
-    <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2'>
+    <div className='min-w-[1100px] bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2'>
       <div className='container'>
         <NavHeader />
         <div className='mt-4 grid grid-cols-12 items-center gap-4'>

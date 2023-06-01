@@ -41,7 +41,7 @@ export default function NavHeader() {
   }
 
   return (
-    <div className='flex justify-end text-white'>
+    <div className='flex min-w-[1100px] justify-end text-white'>
       <Popover
         numberOffset={6}
         className='flex cursor-pointer items-center py-1 hover:text-gray-300'
