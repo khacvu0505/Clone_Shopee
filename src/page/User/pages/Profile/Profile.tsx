@@ -29,7 +29,7 @@ function Info() {
         <div className='w-full pl-5 sm:w-[80%]'>
           <Input
             name='name'
-            className='px-3 py-2'
+            className='py-2'
             register={register}
             placeholder='Tên'
             errorMessage={errors.name?.message}
@@ -44,7 +44,7 @@ function Info() {
             name='phone'
             render={({ field }) => (
               <InputNumber
-                className='px-3 py-2'
+                className='py-2'
                 placeholder='Số điện thoại'
                 errorMessage={errors.phone?.message}
                 {...field}
@@ -131,9 +131,6 @@ export default function Profile() {
           onSuccess: (response) => {
             setProfile(response.data.data)
             setProfileLocalStorage(response.data.data)
-            toast.success(response.data.message, {
-              autoClose: 1500
-            })
             queryClient.invalidateQueries({ queryKey: ['profile'] })
           },
           onError: (error) => {
@@ -182,7 +179,7 @@ export default function Profile() {
               <div className='w-full pl-5 sm:w-[80%]'>
                 <Input
                   name='address'
-                  className='px-3 py-2'
+                  className='py-2'
                   register={register}
                   placeholder='Địa chỉ'
                   errorMessage={errors.address?.message}

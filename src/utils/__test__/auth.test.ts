@@ -1,10 +1,11 @@
-import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from 'src/utils/auth'
-import { beforeAll, beforeEach, describe, expect, it, afterEach, afterAll } from 'vitest'
 import {
+  getAccessTokenFromLocalStorage,
+  getRefreshTokenFromLocalStorage,
   clearAccessTokenFromLocalStorage,
   saveAccessTokenToLocalStorage,
   saveRefreshTokenToLocalStorage
-} from '../auth'
+} from 'src/utils/auth'
+import { beforeAll, beforeEach, describe, expect, it, afterEach, afterAll } from 'vitest'
 const access_token =
   'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzZTFmNzQxNmQ3YzYyMDM0MDg1MGVkOCIsImVtYWlsIjoiZGVtbzAwMUBnbWFpbC5jb20iLCJyb2xlcyI6WyJVc2VyIl0sImNyZWF0ZWRfYXQiOiIyMDIzLTAzLTA0VDAyOjMxOjE2Ljg5OFoiLCJpYXQiOjE2Nzc4OTcwNzYsImV4cCI6MTY3Nzg5ODg3Nn0.QoUyenl7c9lYeIfu6uXuygAGFrCrWKC7xuvgYxJAJ8s'
 

@@ -1,14 +1,15 @@
-/* eslint-disable react/jsx-no-comment-textnodes */
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import { path } from 'src/constant/path'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
+import classNames from 'classnames'
 
 interface RatingStarProps {
   queryConfig: QueryConfig
 }
 
 export default function RatingStar({ queryConfig }: RatingStarProps) {
+  const { rating_filter = -1 } = queryConfig
   const navigate = useNavigate()
 
   const handleRating = (value: number) => {
@@ -17,14 +18,19 @@ export default function RatingStar({ queryConfig }: RatingStarProps) {
       search: createSearchParams({ ...queryConfig, rating_filter: value.toString() }).toString()
     })
   }
+
   return (
     <div className='my-3'>
       <ul>
         {[...Array(5)].map((_, index) => (
           <li className='list-none py-1 pl-2' key={index}>
             <div
-              className='mr-2 flex cursor-pointer items-center'
-              onClick={() => handleRating(5 - index)}
+              className={classNames(`mr-2 flex inline-flex cursor-pointer items-center rounded`, {
+                'bg-slate-100': +rating_filter === 5 - index
+              })}
+              onClick={() => {
+                handleRating(5 - index)
+              }}
               aria-hidden='true'
             >
               {Array(5)
@@ -57,7 +63,6 @@ export default function RatingStar({ queryConfig }: RatingStarProps) {
                           </g>
                         </g>
                       </svg>
-                      // </div>
                     )
                   } else {
                     return (

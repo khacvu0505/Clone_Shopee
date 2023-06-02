@@ -20,21 +20,21 @@ export default function QuantityController({
   value,
   ...rest
 }: QuantityProps) {
-  const [localValue, setLocalValue] = useState<number>(Number(value || 1))
+  const [localValue, setLocalValue] = useState<number>(1)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = Number(event.target.value)
     if (max !== undefined && value > max) {
       value = max
     } else if (value < 1) {
-      value = 1
+      value = undefined as any
     }
     onType && onType(event)
     setLocalValue(value)
   }
 
   const increase = () => {
-    let _value = Number(value || localValue) + 1
+    let _value = Number(value) + 1
 
     if (max !== undefined && _value > max) {
       _value = max
@@ -44,7 +44,7 @@ export default function QuantityController({
   }
 
   const decrease = () => {
-    let _value = Number(value || localValue) - 1
+    let _value = Number(value) - 1
     if (_value <= 1) {
       _value = 1
     }
@@ -53,14 +53,20 @@ export default function QuantityController({
   }
 
   const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
-    onFocusOut && onFocusOut(Number(event.target.value))
+    const value = +event.target.value || 1
+    if (onFocusOut) {
+      onFocusOut(value)
+      return
+    }
+    setLocalValue(value)
   }
 
   return (
     <div className={'flex items-center' + classNameWrapper}>
       <button
+        disabled={value === 1}
         onClick={decrease}
-        className='flex h-11 w-8 items-center justify-center rounded-l-sm border  border-gray-300 text-gray-600'
+        className='flex h-10 w-8 items-center justify-center rounded-l-sm border  border-gray-300 text-gray-600'
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -74,7 +80,7 @@ export default function QuantityController({
         </svg>
       </button>
       <InputNumber
-        className='h-11  w-[100px] text-center'
+        className='w-[100px] text-center'
         onChange={handleChange}
         onBlur={handleBlur}
         value={value || localValue}
@@ -82,7 +88,7 @@ export default function QuantityController({
       />
       <button
         onClick={increase}
-        className='flex h-11 w-8 items-center justify-center rounded-l-sm border  border-gray-300 text-gray-600'
+        className='flex h-10 w-8 items-center justify-center rounded-l-sm border  border-gray-300 text-gray-600'
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'

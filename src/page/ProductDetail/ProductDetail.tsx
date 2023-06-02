@@ -15,8 +15,11 @@ import { PurchaseStatus } from 'src/constant/purchase'
 import { toast } from 'react-toastify'
 import { path } from 'src/constant/path'
 import { useTranslation } from 'react-i18next'
+import { AppContext } from 'src/contexts/app.context'
+import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin'
 
 export default function ProductDetail() {
+  const isLogin = useVerifyIsLogin()
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
   const queryClient = useQueryClientHook()
@@ -108,34 +111,39 @@ export default function ProductDetail() {
   // }
 
   const handleAddToCart = () => {
-    addToCartMutation.mutate(
-      { buy_count: buyCount, product_id: product?._id as string },
-      {
-        onSuccess: (data) => {
-          toast.success(data.data.message, {
-            autoClose: 1500
-          })
-          queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
+    if (isLogin) {
+      addToCartMutation.mutate(
+        { buy_count: buyCount, product_id: product?._id as string },
+        {
+          onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
+          }
         }
-      }
-    )
+      )
+      return
+    }
+    navigate(path.login)
   }
 
   const handleBuyNow = () => {
-    addToCartMutation.mutate(
-      { buy_count: buyCount, product_id: product?._id as string },
-      {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
-          const purchase = data.data.data
-          navigate(path.cart, {
-            state: {
-              purchaseId: purchase._id
-            }
-          })
+    if (isLogin) {
+      addToCartMutation.mutate(
+        { buy_count: buyCount, product_id: product?._id as string },
+        {
+          onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
+            const purchase = data.data.data
+            navigate(path.cart, {
+              state: {
+                purchaseId: purchase._id
+              }
+            })
+          }
         }
-      }
-    )
+      )
+      return
+    }
+    navigate(path.login)
   }
 
   if (!product) return null
@@ -226,13 +234,13 @@ export default function ProductDetail() {
                 </div>
               </div>
               <div className='mt-8 flex items-center'>
-                <div className='capitalize text-gray-500'>Số lượng</div>
+                <div className='mr-3 capitalize text-gray-500'>Số lượng</div>
                 <QuantityController
-                // max={product.quantity}
-                // value={buyCount}
-                // onDecrease={handleBuyCount}
-                // onIncrease={handleBuyCount}
-                // onType={handleBuyCount}
+                  max={product.quantity}
+                  // value={buyCount}
+                  // onDecrease={handleBuyCount}
+                  // onIncrease={handleBuyCount}
+                  // onType={handleBuyCount}
                 />
                 <div className='ml-6 text-sm text-gray-500'>
                   {product.quantity} {t('product:available')}

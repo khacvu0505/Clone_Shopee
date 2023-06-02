@@ -11,10 +11,13 @@ import userImg from 'src/images/userImg.jpg'
 import { getUrlAvatar } from 'src/utils/utils'
 import { useTranslation } from 'react-i18next'
 import { locales } from 'src/i18n/i18n'
+import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin'
 
 // type typeLocales = 'vn' | 'en'
 export default function NavHeader() {
-  const { isAuthenticated, setIsAuthenticated, profile, setProfile } = React.useContext(AppContext)
+  const isLogin = useVerifyIsLogin()
+
+  const { setIsAuthenticated, profile, setProfile } = React.useContext(AppContext)
   const queryClient = useQueryClientHook()
 
   const { i18n } = useTranslation()
@@ -84,7 +87,7 @@ export default function NavHeader() {
           <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' />
         </svg>
       </Popover>
-      {isAuthenticated ? (
+      {isLogin ? (
         <Popover
           className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'
           renderPopover={

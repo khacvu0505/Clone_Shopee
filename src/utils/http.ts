@@ -5,12 +5,10 @@ import {
   clearAccessTokenFromLocalStorage,
   saveAccessTokenToLocalStorage,
   getAccessTokenFromLocalStorage,
-  getProfile,
   setProfile,
   saveRefreshTokenToLocalStorage,
   getRefreshTokenFromLocalStorage
 } from './auth'
-import { path } from 'src/constant/path'
 import { URL_LOGIN, URL_LOGOUT, URL_REFRESH_TOKEN, URL_REGISTER } from 'src/api/auth.api'
 import { isAxiosExpiredTokenError, isAxiosUnauthorizeError } from './utils'
 import { ErrorResponse } from 'src/types/utils.type'

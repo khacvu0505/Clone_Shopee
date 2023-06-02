@@ -5,7 +5,6 @@ import Login from './page/Login'
 import ProductList from './page/ProductList'
 import Register from './page/Register'
 import MainLayout from './layout/MainLayout'
-import { AppContext } from 'src/contexts/app.context'
 import { path } from 'src/constant/path'
 import ProductDetail from './page/ProductDetail'
 import Cart from './page/Cart'
@@ -15,15 +14,16 @@ import ChangePassword from './page/User/pages/ChangePassword'
 import HistoryPurchase from './page/User/pages/HistoryPurchase'
 import Profile from './page/User/pages/Profile'
 import PageNotFound from './page/PageNotFound'
+import { useVerifyIsLogin } from './hooks/useVerifyIsLogin'
 
 function ProtectedRoute() {
-  const { isAuthenticated } = React.useContext(AppContext)
-  return isAuthenticated ? <Outlet /> : <Navigate to='/login' />
+  const islogin = useVerifyIsLogin()
+  return islogin ? <Outlet /> : <Navigate to='/login' />
 }
 
 function RejectedRoute() {
-  const { isAuthenticated } = React.useContext(AppContext)
-  return !isAuthenticated ? <Outlet /> : <Navigate to='/' />
+  const islogin = useVerifyIsLogin()
+  return !islogin ? <Outlet /> : <Navigate to='/' />
 }
 
 export default function useRouteElement() {

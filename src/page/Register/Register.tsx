@@ -35,8 +35,7 @@ export default function Register() {
   const {
     register,
     handleSubmit,
-    watch,
-    getValues,
+
     setError,
     formState: { errors }
   } = useForm<IFormInput>({

@@ -9,18 +9,18 @@ import { getPurchaseList } from 'src/api/purchase.api'
 import { formatCurrency } from 'src/utils/utils'
 import NavHeader from '../NavHeader'
 import useSearchProduct from 'src/hooks/useSearchProduct'
+import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin'
 
 const MAX_PURCHASES = 5
 
 export default function Header() {
   const { onSubmitSearch, register } = useSearchProduct()
-
-  const { isAuthenticated } = React.useContext(AppContext)
+  const islogin = useVerifyIsLogin()
 
   const { data: purchaseInCardData } = useQuery({
     queryKey: ['purchases', PurchaseStatus.inCart],
     queryFn: () => getPurchaseList(PurchaseStatus.inCart),
-    enabled: isAuthenticated
+    enabled: islogin
   })
 
   const purchaseInCard = purchaseInCardData?.data.data ?? []

@@ -120,18 +120,20 @@ export default function Cart() {
     setExtendedPurchases(extendedPurchases.map((item) => ({ ...item, checked: !isCheckedAll })))
   }
 
-  const handleQuantity = (purchaseIndex: number, value: number, isDisabled: boolean) => {
-    if (isDisabled) {
-      return
-    }
+  const handleQuantity = (purchaseIndex: number, value: number, isDisable?: boolean) => {
+    if (isDisable) return
     const purchase = extendedPurchases[purchaseIndex]
     updatePurchasesMutation.mutate({ product_id: purchase.product._id, buy_count: value })
   }
 
   const handleChangeInputQuantity = (purchaseIndex: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('event.target.value', event.target.value)
+    const value = +event.target.value
+    const maxValue = extendedPurchases[purchaseIndex].product.quantity
+    const valueChange = value > maxValue ? maxValue : value
     setExtendedPurchases(
       produce((draf) => {
-        draf[purchaseIndex].buy_count = Number(event.target.value || 1)
+        draf[purchaseIndex].buy_count = valueChange
       })
     )
   }
@@ -158,6 +160,7 @@ export default function Cart() {
     }, [])
     listProduct.length > 0 && buyPurchasesMutation.mutate(listProduct)
   }
+  console.log('extendedPurchases', extendedPurchases)
 
   return (
     <div className='min-w-[1100px] bg-neutral-100 py-16'>
@@ -248,15 +251,7 @@ export default function Cart() {
                             }
                             onDecrease={() => handleQuantity(index, item.buy_count - 1, item.buy_count <= 1)}
                             onType={handleChangeInputQuantity(index)}
-                            onFocusOut={(value) =>
-                              handleQuantity(
-                                index,
-                                value,
-                                item.buy_count <= 1 ||
-                                  item.buy_count >= item.product.quantity ||
-                                  value === purchaseInCard[index].buy_count
-                              )
-                            }
+                            onFocusOut={(value) => handleQuantity(index, value)}
                           />
                         </div>
                         <div className='col-span-1'>

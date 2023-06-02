@@ -39,7 +39,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
         value={value === undefined ? localValue : value}
         ref={ref}
         onChange={handleChange}
-        className='w-full rounded-sm border border-gray-300 p-3 focus:border-gray-500 focus:shadow-sm'
+        className='h-10 w-full rounded-sm border border-gray-300 p-3 focus:border-gray-500 focus:shadow-sm'
       />
       {errorMessage && <div className='mt-1 min-h-[1.2rem] text-sm italic text-red-600'>{errorMessage}</div>}
     </div>
