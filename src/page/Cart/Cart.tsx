@@ -11,6 +11,7 @@ import produce from 'immer'
 import { useQueryClientHook } from 'src/hooks/useQueryClient'
 import { toast } from 'react-toastify'
 import { AppContext } from 'src/contexts/app.context'
+import Loading from 'src/components/Loading'
 
 export default function Cart() {
   const { extendedPurchases, setExtendedPurchases } = useContext(AppContext)
@@ -20,7 +21,7 @@ export default function Cart() {
 
   const queryClient = useQueryClientHook()
 
-  const { data: purchaseInCardData } = useQuery({
+  const { data: purchaseInCardData, isLoading } = useQuery({
     queryKey: ['purchases', PurchaseStatus.inCart],
     queryFn: () => getPurchaseList(PurchaseStatus.inCart)
   })
@@ -127,7 +128,6 @@ export default function Cart() {
   }
 
   const handleChangeInputQuantity = (purchaseIndex: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('event.target.value', event.target.value)
     const value = +event.target.value
     const maxValue = extendedPurchases[purchaseIndex].product.quantity
     const valueChange = value > maxValue ? maxValue : value
@@ -160,7 +160,8 @@ export default function Cart() {
     }, [])
     listProduct.length > 0 && buyPurchasesMutation.mutate(listProduct)
   }
-  console.log('extendedPurchases', extendedPurchases)
+
+  if (isLoading) return <Loading />
 
   return (
     <div className='min-w-[1100px] bg-neutral-100 py-16'>

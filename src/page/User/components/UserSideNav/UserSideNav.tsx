@@ -7,7 +7,6 @@ import { getUrlAvatar } from 'src/utils/utils'
 
 export default function UserSideNav() {
   const { profile } = useContext(AppContext)
-  console.log('profile', profile)
   return (
     <div>
       <div className='flex items-center border-b border-b-gray-200 py-4'>

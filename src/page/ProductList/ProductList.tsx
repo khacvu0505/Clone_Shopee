@@ -8,6 +8,7 @@ import { getCategoryList } from 'src/api/category.api'
 import Paginatiton from 'src/components/Paginatiton'
 import { ProductListConfig } from 'src/types/product.type'
 import useQueryConfig from 'src/hooks/useQueryConfig'
+import Loading from 'src/components/Loading'
 
 // rangePage = 2
 // [1] 2 3 ... 19 20
@@ -38,7 +39,7 @@ import useQueryConfig from 'src/hooks/useQueryConfig'
 export default function ProductList() {
   const queryConfig = useQueryConfig()
 
-  const { data: productList } = useQuery({
+  const { data: productList, isLoading } = useQuery({
     queryKey: ['productList', queryConfig],
     queryFn: () => getProductList(queryConfig as ProductListConfig),
     keepPreviousData: true,
@@ -48,6 +49,7 @@ export default function ProductList() {
     queryKey: ['categoryList'],
     queryFn: getCategoryList
   })
+  if (isLoading) return <Loading />
 
   return (
     <div className='min-w-[1100px] bg-gray-200 py-6'>

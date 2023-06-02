@@ -23,9 +23,9 @@ export default function Product({ product }: ProductProps) {
             <div className='ml-1 truncate text-sm text-orange'>{formatCurrency(product.price)}</div>
           </div>
         </div>
-        <div className='mt-3 flex items-center justify-end'>
+        <div className='m-3 flex items-center justify-end'>
           <ProductRating rating={product.rating} />
-          <div className='ml-2 text-sm'>
+          <div className='mx-2 text-sm '>
             <span>{formatNumberToSocialStyle(product.sold)}</span>
             <span className='ml-1'>Đã bán</span>
           </div>

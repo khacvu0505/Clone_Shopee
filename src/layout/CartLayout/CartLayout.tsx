@@ -1,6 +1,7 @@
 import React from 'react'
 import CartHeader from 'src/components/CartHeader'
 import Footer from 'src/components/Footer'
+import { useQueryClientHook } from 'src/hooks/useQueryClient'
 
 interface CartLayoutProps {
   children?: React.ReactNode

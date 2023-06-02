@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getProductDetail, getProductList } from 'src/api/product.api'
-import InputNumber from 'src/components/InputNumber'
 import ProductRating from 'src/components/ProductRating'
 import { formatCurrency, rateSale, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils/utils'
 import DOMPurify from 'isomorphic-dompurify'
@@ -12,11 +11,10 @@ import QuantityController from 'src/components/QuantityController'
 import { addToCart } from 'src/api/purchase.api'
 import { useQueryClientHook } from 'src/hooks/useQueryClient'
 import { PurchaseStatus } from 'src/constant/purchase'
-import { toast } from 'react-toastify'
 import { path } from 'src/constant/path'
 import { useTranslation } from 'react-i18next'
-import { AppContext } from 'src/contexts/app.context'
 import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin'
+import Loading from 'src/components/Loading'
 
 export default function ProductDetail() {
   const isLogin = useVerifyIsLogin()
@@ -38,7 +36,7 @@ export default function ProductDetail() {
 
   const queryConfig = { page: 1, limit: 20, category: product?.category._id }
 
-  const { data: dataproductList } = useQuery({
+  const { data: dataProductList, isLoading } = useQuery({
     queryKey: ['productList', queryConfig],
     queryFn: () => getProductList(queryConfig as ProductListConfig),
     enabled: Boolean(product),
@@ -106,9 +104,9 @@ export default function ProductDetail() {
     imageRef.current?.removeAttribute('style')
   }
 
-  // const handleBuyCount = (value: number) => {
-  //   setBuyCount(value)
-  // }
+  const handleBuyCount = (value: number) => {
+    setBuyCount(value)
+  }
 
   const handleAddToCart = () => {
     if (isLogin) {
@@ -145,6 +143,7 @@ export default function ProductDetail() {
     }
     navigate(path.login)
   }
+  if (isLoading) return <Loading />
 
   if (!product) return null
 
@@ -240,7 +239,7 @@ export default function ProductDetail() {
                   // value={buyCount}
                   // onDecrease={handleBuyCount}
                   // onIncrease={handleBuyCount}
-                  // onType={handleBuyCount}
+                  onType={(e) => handleBuyCount(+e.target.value)}
                 />
                 <div className='ml-6 text-sm text-gray-500'>
                   {product.quantity} {t('product:available')}
@@ -299,8 +298,8 @@ export default function ProductDetail() {
       <div className='mt-8'>
         <div className='container'>
           <div className='mt-6 grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-6'>
-            {dataproductList &&
-              dataproductList.data.data.products.map((product) => (
+            {dataProductList &&
+              dataProductList.data.data.products.map((product) => (
                 <ProductItemComponent key={product._id} product={product} />
               ))}
           </div>
