@@ -1,14 +1,14 @@
-import React, { useRef, useState, useId } from 'react'
-import { offset, shift, arrow, useFloating, FloatingPortal, Placement } from '@floating-ui/react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useRef, useState, useId } from 'react';
+import { offset, shift, arrow, useFloating, FloatingPortal, Placement } from '@floating-ui/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PopOverProp {
-  children?: React.ReactNode
-  renderPopover: React.ReactNode
-  className?: string
-  initalOpen?: boolean
-  numberOffset?: number
-  placement?: Placement
+  children?: React.ReactNode;
+  renderPopover: React.ReactNode;
+  className?: string;
+  initalOpen?: boolean;
+  numberOffset?: number;
+  placement?: Placement;
 }
 
 export default function Popover({
@@ -19,20 +19,20 @@ export default function Popover({
   numberOffset = -10,
   placement = 'bottom-end'
 }: PopOverProp) {
-  const [open, setIsOpen] = useState(initalOpen)
-  const arrowRef = useRef<HTMLElement>(null)
+  const [open, setIsOpen] = useState(initalOpen);
+  const arrowRef = useRef<HTMLElement>(null);
   const { x, y, reference, floating, strategy, middlewareData } = useFloating({
     middleware: [offset(numberOffset), shift(), arrow({ element: arrowRef })],
     placement
-  })
+  });
 
-  const id = useId()
+  const id = useId();
   const showPopover = () => {
-    setIsOpen(true)
-  }
+    setIsOpen(true);
+  };
   const hidePopover = () => {
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
   return (
     <div className={className} ref={reference} onMouseEnter={showPopover} onMouseLeave={hidePopover}>
@@ -68,5 +68,5 @@ export default function Popover({
         </AnimatePresence>
       </FloatingPortal>
     </div>
-  )
+  );
 }

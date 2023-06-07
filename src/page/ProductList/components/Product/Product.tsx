@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom'
-import ProductRating from 'src/components/ProductRating'
-import { Product as ProductType } from 'src/types/product.type'
-import { formatCurrency, formatNumberToSocialStyle, generateNameId } from 'src/utils/utils'
+import { Link } from 'react-router-dom';
+import ProductRating from 'src/components/ProductRating';
+import { Product as ProductType } from 'src/types/product.type';
+import { formatCurrency, formatNumberToSocialStyle, generateNameId } from 'src/utils/utils';
 
 interface ProductProps {
-  product: ProductType
+  product: ProductType;
 }
 
 export default function Product({ product }: ProductProps) {
@@ -32,5 +32,5 @@ export default function Product({ product }: ProductProps) {
         </div>
       </div>
     </Link>
-  )
+  );
 }

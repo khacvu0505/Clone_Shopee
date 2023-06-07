@@ -1,27 +1,26 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
-import React, { Fragment, useContext, useEffect, useState } from 'react'
-import { BodyUpdateProfile, getProfile, updateProfile, uploadAvatar } from 'src/api/user.api'
-import Button from 'src/components/Button'
-import Input from 'src/components/Input'
-import { UserSchema, userSchema } from 'src/utils/rules'
-import { useForm, Controller, FormProvider, useFormContext } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import InputNumber from 'src/components/InputNumber'
-import DateSelect from '../../components/DateSelect'
-import { useQueryClientHook } from 'src/hooks/useQueryClient'
-import { toast } from 'react-toastify'
-import { AppContext } from 'src/contexts/app.context'
-import { setProfile as setProfileLocalStorage } from 'src/utils/auth'
-import { getUrlAvatar, isAxiosUnprocessableEntity } from 'src/utils/utils'
-import { ErrorResponse } from 'src/types/utils.type'
-import InputFile from 'src/components/InputFile'
+import { useMutation, useQuery } from '@tanstack/react-query';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
+import { BodyUpdateProfile, getProfile, updateProfile, uploadAvatar } from 'src/api/user.api';
+import Button from 'src/components/Button';
+import Input from 'src/components/Input';
+import { UserSchema, userSchema } from 'src/utils/rules';
+import { useForm, Controller, FormProvider, useFormContext } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import InputNumber from 'src/components/InputNumber';
+import DateSelect from '../../components/DateSelect';
+import { useQueryClientHook } from 'src/hooks/useQueryClient';
+import { AppContext } from 'src/contexts/app.context';
+import { setProfile as setProfileLocalStorage } from 'src/utils/auth';
+import { getUrlAvatar, isAxiosUnprocessableEntity } from 'src/utils/utils';
+import { ErrorResponse } from 'src/types/utils.type';
+import InputFile from 'src/components/InputFile';
 
 function Info() {
   const {
     register,
     control,
     formState: { errors }
-  } = useFormContext<FormData>()
+  } = useFormContext<FormData>();
   return (
     <Fragment>
       <div className='mt-6 flex flex-col flex-wrap sm:flex-row'>
@@ -56,14 +55,14 @@ function Info() {
         </div>
       </div>
     </Fragment>
-  )
+  );
 }
 
-type FormData = Pick<UserSchema, 'name' | 'phone' | 'address' | 'date_of_birth' | 'avatar'>
+type FormData = Pick<UserSchema, 'name' | 'phone' | 'address' | 'date_of_birth' | 'avatar'>;
 
-type FormDataError = Omit<FormData, 'date_of_birth'> & { date_of_birth?: string }
+type FormDataError = Omit<FormData, 'date_of_birth'> & { date_of_birth?: string };
 
-const profileSchema = userSchema.pick(['name', 'phone', 'address', 'date_of_birth', 'avatar'])
+const profileSchema = userSchema.pick(['name', 'phone', 'address', 'date_of_birth', 'avatar']);
 
 export default function Profile() {
   const methods = useForm<FormData>({
@@ -75,7 +74,7 @@ export default function Profile() {
       avatar: ''
     },
     resolver: yupResolver(profileSchema)
-  })
+  });
   const {
     register,
     control,
@@ -83,81 +82,81 @@ export default function Profile() {
     setValue,
     handleSubmit,
     formState: { errors }
-  } = methods
+  } = methods;
 
-  const queryClient = useQueryClientHook()
-  const { setProfile } = useContext(AppContext)
+  const queryClient = useQueryClientHook();
+  const { setProfile } = useContext(AppContext);
 
-  const [avatarUser, setAvatarUser] = useState<File | string>('')
+  const [avatarUser, setAvatarUser] = useState<File | string>('');
 
   const { data: profileData } = useQuery({
     queryKey: ['profile'],
     queryFn: getProfile
-  })
-  const profile = profileData?.data.data
+  });
+  const profile = profileData?.data.data;
 
   const updateProfileMutation = useMutation({
     mutationFn: updateProfile
-  })
+  });
 
   const uploadAvatarMutation = useMutation({
     mutationFn: uploadAvatar
-  })
+  });
 
   useEffect(() => {
     if (profile) {
-      setValue('name', profile.name)
-      setValue('phone', profile.phone)
-      setValue('address', profile.address)
-      setValue('avatar', profile.avatar)
-      setValue('date_of_birth', profile.date_of_birth ? new Date(profile.date_of_birth) : new Date(1990, 0, 0))
-      setAvatarUser(profile.avatar || '')
+      setValue('name', profile.name);
+      setValue('phone', profile.phone);
+      setValue('address', profile.address);
+      setValue('avatar', profile.avatar);
+      setValue('date_of_birth', profile.date_of_birth ? new Date(profile.date_of_birth) : new Date(1990, 0, 0));
+      setAvatarUser(profile.avatar || '');
     }
-  }, [profile, setValue])
+  }, [profile, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      let avatarName = ''
+      let avatarName = '';
       if (typeof avatarUser !== 'string' && avatarUser) {
-        const formData = new FormData()
-        formData.append('image', avatarUser)
-        const uploadAvatarResult = await uploadAvatarMutation.mutateAsync(formData)
-        avatarName = uploadAvatarResult.data.data
-        setValue('avatar', avatarName)
+        const formData = new FormData();
+        formData.append('image', avatarUser);
+        const uploadAvatarResult = await uploadAvatarMutation.mutateAsync(formData);
+        avatarName = uploadAvatarResult.data.data;
+        setValue('avatar', avatarName);
       }
       updateProfileMutation.mutate(
         { ...(data as BodyUpdateProfile), avatar: avatarName ? avatarName : data.avatar },
         {
           onSuccess: (response) => {
-            setProfile(response.data.data)
-            setProfileLocalStorage(response.data.data)
-            queryClient.invalidateQueries({ queryKey: ['profile'] })
+            setProfile(response.data.data);
+            setProfileLocalStorage(response.data.data);
+            queryClient.invalidateQueries({ queryKey: ['profile'] });
           },
           onError: (error) => {
             if (isAxiosUnprocessableEntity<ErrorResponse<FormData>>(error)) {
-              const formError = error.response?.data.data
+              const formError = error.response?.data.data;
               if (formError) {
                 Object.keys(formError).forEach((key) => {
                   setError(key as keyof FormDataError, {
                     message: formError[key as keyof FormDataError] as string | undefined,
                     type: 'Server'
-                  })
-                })
+                  });
+                });
               }
             }
           }
         }
-      )
+      );
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  })
+  });
 
   const handleChangeFile = (file?: File) => {
-    setAvatarUser(file as File)
-  }
+    setAvatarUser(file as File);
+  };
 
-  if (!profile) return null
+  if (!profile) return null;
   return (
     <div className='min-w-[700px] rounded-sm bg-white px-2 pb-10 shadow md:px-7 md:pb-20'>
       <div className='border-b border-b-gray-200 py-6'>
@@ -230,5 +229,5 @@ export default function Profile() {
         </form>
       </FormProvider>
     </div>
-  )
+  );
 }

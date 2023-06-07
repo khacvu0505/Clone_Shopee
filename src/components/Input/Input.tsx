@@ -1,15 +1,15 @@
-import React from 'react'
-import type { UseFormRegister, RegisterOptions, FieldValues, Path } from 'react-hook-form'
+import React from 'react';
+import type { UseFormRegister, RegisterOptions, FieldValues, Path } from 'react-hook-form';
 
 interface Props<Data extends FieldValues> extends React.InputHTMLAttributes<HTMLInputElement> {
   // type: React.HTMLInputTypeAttribute
-  errorMessage?: string
+  errorMessage?: string;
   // placeholder?: string
-  className?: string
-  name: Path<Data>
-  register?: UseFormRegister<Data>
-  rules?: RegisterOptions
-  autoComplete?: string
+  className?: string;
+  name: Path<Data>;
+  register?: UseFormRegister<Data>;
+  rules?: RegisterOptions;
+  autoComplete?: string;
 }
 
 // interface InputProps {
@@ -24,9 +24,7 @@ interface Props<Data extends FieldValues> extends React.InputHTMLAttributes<HTML
 // }
 
 export default function Input<Data extends FieldValues>({
-  // type,
   errorMessage,
-  // placeholder,
   className,
   name,
   register,
@@ -34,20 +32,16 @@ export default function Input<Data extends FieldValues>({
   autoComplete,
   ...rest
 }: Props<Data>) {
-  const registerResult = register && name ? register(name, rules) : null
+  const registerResult = register && name ? register(name, rules) : null;
   return (
     <div className={className}>
       <input
-        // type={type}
-        // placeholder={placeholder}
         {...rest}
         className={`w-full rounded-sm border border-gray-300 p-3 focus:border-gray-500 focus:shadow-sm ${className}`}
-        // className={className}
-        // {...register(name, rules)}
         {...registerResult}
         autoComplete={autoComplete}
       />
       {errorMessage && <div className='mt-1 min-h-[1.2rem] text-sm italic text-red-600'>{errorMessage}</div>}
     </div>
-  )
+  );
 }

@@ -1,27 +1,26 @@
 interface ProductRatingProps {
-  rating: number
-  color?: string
+  rating: number;
 }
 
 export default function ProductRating(props: ProductRatingProps) {
-  const { rating, color = 'yellow' } = props
+  const { rating } = props;
 
-  const handlWidthStar = (value: number) => {
+  const renderWidthStart = (value: number) => {
     if (rating >= value) {
-      return '100%'
+      return '100%';
     }
     if (rating < value && value - rating < 1) {
-      const width = rating - Math.floor(rating)
-      return `${Math.abs(width) * 100}%`
+      const width = rating - Math.floor(rating);
+      return `${Math.abs(width) * 100}%`;
     }
-    return ' 0%'
-  }
+    return '0%';
+  };
 
   return (
     <div className='flex items-center'>
       {[...Array(5)].map((_, index) => (
         <div className='relative' key={index}>
-          <div className='absolute top-0 left-0 h-full overflow-hidden' style={{ width: handlWidthStar(index + 1) }}>
+          <div className='absolute top-0 left-0 h-full overflow-hidden' style={{ width: renderWidthStart(index + 1) }}>
             <svg
               enableBackground='new 0 0 15 15'
               viewBox='0 0 15 15'
@@ -54,5 +53,5 @@ export default function ProductRating(props: ProductRatingProps) {
         </div>
       ))}
     </div>
-  )
+  );
 }

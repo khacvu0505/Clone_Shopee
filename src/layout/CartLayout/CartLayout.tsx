@@ -1,10 +1,9 @@
-import React from 'react'
-import CartHeader from 'src/components/CartHeader'
-import Footer from 'src/components/Footer'
-import { useQueryClientHook } from 'src/hooks/useQueryClient'
+import React from 'react';
+import CartHeader from 'src/components/CartHeader';
+import Footer from 'src/components/Footer';
 
 interface CartLayoutProps {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 export default function CartLayout({ children }: CartLayoutProps) {
@@ -14,5 +13,5 @@ export default function CartLayout({ children }: CartLayoutProps) {
       {children}
       <Footer />
     </div>
-  )
+  );
 }

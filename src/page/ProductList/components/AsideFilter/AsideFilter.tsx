@@ -1,38 +1,39 @@
-import React from 'react'
-import { Link, createSearchParams, useNavigate } from 'react-router-dom'
-import Button from 'src/components/Button'
-import { path } from 'src/constant/path'
-import { Category } from 'src/types/category.type'
-import classNames from 'classnames'
-import InputNumber from 'src/components/InputNumber'
-import { useForm, Controller } from 'react-hook-form'
-import { Schema, schema } from 'src/utils/rules'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { isEmpty, omit } from 'lodash'
-import RatingStar from '../RatingStar'
-import { QueryConfig } from 'src/hooks/useQueryConfig'
-import InputV2 from 'src/components/InputV2'
-import { useTranslation } from 'react-i18next'
+import React from 'react';
+import { Link, createSearchParams, useNavigate } from 'react-router-dom';
+import Button from 'src/components/Button';
+import { path } from 'src/constant/path';
+import classNames from 'classnames';
+import InputNumber from 'src/components/InputNumber';
+import { useForm, Controller } from 'react-hook-form';
+import { Schema, schema } from 'src/utils/rules';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { isEmpty, omit } from 'lodash';
+import RatingStar from '../RatingStar';
+import useQueryConfig from 'src/hooks/useQueryConfig';
+import InputV2 from 'src/components/InputV2';
+import { useTranslation } from 'react-i18next';
+import { getCategoryList } from 'src/api/category.api';
+import { useQuery } from '@tanstack/react-query';
 
-const priceSchema = schema.pick(['price_min', 'price_max'])
-interface AsideFilterProps {
-  dataCategory?: Category[] | []
-  queryConfig: QueryConfig
-}
+const priceSchema = schema.pick(['price_min', 'price_max']);
 
 // interface FormData {
 //   price_min: string
 //   price_max: string
 // }
-type FormData = Pick<Schema, 'price_min' | 'price_max'>
+type FormData = Pick<Schema, 'price_min' | 'price_max'>;
 
-export default function AsideFilter(props: AsideFilterProps) {
-  const { dataCategory = [], queryConfig } = props
-  const { t } = useTranslation(['home', 'product'])
+export default function AsideFilter() {
+  const { data: dataCategory } = useQuery({
+    queryKey: ['categoryList'],
+    queryFn: getCategoryList
+  });
+  const queryConfig = useQueryConfig();
+
+  const { t } = useTranslation(['home', 'product']);
   const {
     control,
     handleSubmit,
-    watch,
     reset,
     formState: { errors }
   } = useForm<FormData>({
@@ -41,11 +42,11 @@ export default function AsideFilter(props: AsideFilterProps) {
       price_max: ''
     },
     resolver: yupResolver(priceSchema)
-  })
+  });
 
-  const navigate = useNavigate()
-  const categoryId = queryConfig.category
-  const isActiveCategory = (id: string) => categoryId === id
+  const navigate = useNavigate();
+  const categoryId = queryConfig.category;
+  const isActiveCategory = (id: string) => categoryId === id;
 
   const onSubmit = (data: FormData) => {
     navigate({
@@ -55,16 +56,16 @@ export default function AsideFilter(props: AsideFilterProps) {
         price_min: data.price_min || '',
         price_max: data.price_max || ''
       }).toString()
-    })
-  }
+    });
+  };
 
   const handleClearFilter = () => {
-    reset()
+    reset();
     navigate({
       pathname: path.home,
       search: createSearchParams(omit(queryConfig, ['price_min', 'price_max', 'rating_filter', 'category'])).toString()
-    })
-  }
+    });
+  };
 
   return (
     <div className='py-4'>
@@ -91,16 +92,16 @@ export default function AsideFilter(props: AsideFilterProps) {
       </Link>
       <div className='my-4'>
         <ul>
-          {dataCategory.map((item) => (
+          {dataCategory?.data?.data.map((item) => (
             <li className='py-2 pl-2' key={item._id}>
               <Link
                 to={{
                   pathname: path.home,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  //@ts-ignore
                   search: `${new URLSearchParams({ ...queryConfig, category: item._id })}`
                 }}
-                className={`relative px-2  ${isActiveCategory(item._id) ? 'font-semibold text-orange' : ''}`}
+                className={classNames('relative px-2', {
+                  'font-semibold text-orange': isActiveCategory(item._id)
+                })}
               >
                 {isActiveCategory(item._id) && (
                   <svg viewBox='0 0 4 7' className='absolute top-1 left-[-10px] h-2 w-2 fill-orange'>
@@ -180,9 +181,9 @@ export default function AsideFilter(props: AsideFilterProps) {
           className='w-full rounded-sm bg-orange py-2 text-sm text-white hover:bg-opacity-80'
           onClick={handleClearFilter}
         >
-          Xóa tất cả
+          Xoá tất cả
         </Button>
       </div>
     </div>
-  )
+  );
 }

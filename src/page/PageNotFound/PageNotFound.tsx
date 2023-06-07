@@ -1,6 +1,6 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { path } from 'src/constant/path'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { path } from 'src/constant/path';
 
 export default function PageNotFound() {
   return (
@@ -21,5 +21,5 @@ export default function PageNotFound() {
         </button>
       </main>
     </div>
-  )
+  );
 }

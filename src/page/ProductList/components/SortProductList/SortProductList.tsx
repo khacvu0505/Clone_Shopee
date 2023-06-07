@@ -1,25 +1,25 @@
-import React, { useMemo } from 'react'
+import React, { useMemo } from 'react';
 
-import { SortBy, Order } from 'src/constant/product'
-import { Link, createSearchParams, useNavigate } from 'react-router-dom'
-import { path } from 'src/constant/path'
-import { omit } from 'lodash'
-import { QueryConfig } from 'src/hooks/useQueryConfig'
+import { SortBy, Order } from 'src/constant/product';
+import { Link, createSearchParams, useNavigate } from 'react-router-dom';
+import { path } from 'src/constant/path';
+import { omit } from 'lodash';
+import { QueryConfig } from 'src/hooks/useQueryConfig';
 
 interface SortProductListProps {
-  pageSize: number
-  queryConfig: QueryConfig
+  pageSize: number;
+  queryConfig: QueryConfig;
 }
 
 export default function SortProductList(props: SortProductListProps) {
-  const { queryConfig, pageSize } = props
-  const page = Number(queryConfig.page) || 1
-  const { sort_by = SortBy.createdAt, order = Order.desc } = queryConfig
-  const navigate = useNavigate()
+  const { queryConfig, pageSize } = props;
+  const page = Number(queryConfig.page) || 1;
+  const { sort_by = SortBy.createdAt, order = Order.desc } = queryConfig;
+  const navigate = useNavigate();
 
   const isActiveSortBy = (sortByValue: SortBy) => {
-    return sort_by === sortByValue
-  }
+    return sort_by === sortByValue;
+  };
 
   const listBtn = useMemo(() => {
     return [
@@ -35,8 +35,8 @@ export default function SortProductList(props: SortProductListProps) {
         key: 'Bán chạy',
         value: SortBy.sold
       }
-    ]
-  }, [])
+    ];
+  }, []);
 
   const handleSort = (redirect: SortBy) => {
     navigate({
@@ -50,8 +50,8 @@ export default function SortProductList(props: SortProductListProps) {
           'order'
         )
       ).toString()
-    })
-  }
+    });
+  };
 
   const renderBtnSort = () => {
     return listBtn.map((item, index) => (
@@ -66,8 +66,8 @@ export default function SortProductList(props: SortProductListProps) {
       >
         {item.key}
       </button>
-    ))
-  }
+    ));
+  };
 
   const handlePriceOrder = (orderValue: Order) => {
     navigate({
@@ -77,44 +77,14 @@ export default function SortProductList(props: SortProductListProps) {
         sort_by: SortBy.price,
         order: orderValue
       }).toString()
-    })
-  }
+    });
+  };
 
   return (
     <div className='bg-gray-300/40 py-4 px-2'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <div className='flex flex-wrap items-center gap-2'>
           <div className='text-sm'>Sắp xếp theo</div>
-          {/* <button
-            className={`h-8 rounded-sm px-4 text-center text-sm capitalize ${
-              isActiveSortBy(SortBy.view)
-                ? 'bg-orange text-white hover:bg-orange/80 '
-                : 'bg-white text-black hover:bg-slate-200'
-            }`}
-            onClick={() => handleNavigate(SortBy.view)}
-          >
-            Phổ biến
-          </button>
-          <button
-            className={`h-8 rounded-sm px-4 text-center text-sm capitalize ${
-              isActiveSortBy(SortBy.createdAt)
-                ? 'bg-orange text-white hover:bg-orange/80 '
-                : 'bg-white text-black hover:bg-slate-200'
-            }`}
-            onClick={() => handleNavigate(SortBy.createdAt)}
-          >
-            Mới nhất
-          </button>
-          <button
-            className={`h-8 rounded-sm px-4 text-center text-sm capitalize ${
-              isActiveSortBy(SortBy.sold)
-                ? 'bg-orange text-white hover:bg-orange/80 '
-                : 'bg-white text-black hover:bg-slate-200'
-            }`}
-            onClick={() => handleNavigate(SortBy.sold)}
-          >
-            Bán chạy
-          </button> */}
           {renderBtnSort()}
           <select
             className={`h-8 rounded-sm border-none px-4 text-center text-sm capitalize outline-none ${
@@ -146,13 +116,8 @@ export default function SortProductList(props: SortProductListProps) {
               <Link
                 to={{
                   pathname: path.home,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  //@ts-ignore
-                  search: `${new URLSearchParams({ ...queryConfig, page: page - 1 })}`
+                  search: `${new URLSearchParams({ ...queryConfig, page: String(page - 1) })}`
                 }}
-                // className={`mx-2 rounded bg-white px-2  py-3 shadow-sm hover:bg-slate-100 ${
-                //   page > 1 ? 'cursor-pointer' : 'pointer-events-none'
-                // }`}
                 className={`bg-white/60shadow-sm h-8 cursor-not-allowed rounded-tl-sm rounded-bl-sm hover:bg-slate-300 ${
                   page > 1 ? 'cursor-pointer' : 'pointer-events-none'
                 }`}
@@ -177,13 +142,8 @@ export default function SortProductList(props: SortProductListProps) {
               <Link
                 to={{
                   pathname: path.home,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  //@ts-ignore
-                  search: `${new URLSearchParams({ ...queryConfig, page: page + 1 })}`
+                  search: `${new URLSearchParams({ ...queryConfig, page: String(page + 1) })}`
                 }}
-                // className={`mx-2 rounded bg-white px-2  py-3 shadow-sm hover:bg-slate-100 ${
-                //   page > 1 ? 'cursor-pointer' : 'pointer-events-none'
-                // }`}
                 className={`bg-white/60shadow-sm h-8 cursor-not-allowed rounded-tl-sm rounded-bl-sm hover:bg-slate-300 ${
                   page < pageSize ? 'cursor-pointer' : 'pointer-events-none'
                 }`}
@@ -200,22 +160,9 @@ export default function SortProductList(props: SortProductListProps) {
                 </svg>
               </Link>
             </div>
-
-            {/* <button className='h-8 rounded-tl-sm rounded-bl-sm bg-white/60  px-2 shadow-sm hover:bg-slate-300'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='h-4 w-4'
-              >
-                <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
-              </svg>
-            </button> */}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

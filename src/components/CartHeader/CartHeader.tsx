@@ -1,10 +1,10 @@
-import React from 'react'
-import NavHeader from '../NavHeader'
-import { Link } from 'react-router-dom'
-import useSearchProduct from 'src/hooks/useSearchProduct'
+import React from 'react';
+import NavHeader from '../NavHeader';
+import { Link } from 'react-router-dom';
+import useSearchProduct from 'src/hooks/useSearchProduct';
 
 export default function CartHeader() {
-  const { register, onSubmitSearch } = useSearchProduct()
+  const { register, onSubmitSearch } = useSearchProduct();
   return (
     <div className=' border-b border-b-black/10'>
       <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
@@ -57,5 +57,5 @@ export default function CartHeader() {
         </div>
       </div>
     </div>
-  )
+  );
 }

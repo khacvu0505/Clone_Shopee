@@ -9,4 +9,4 @@ export const path = {
   detail: '/product-detail/:nameId',
   cart: '/cart',
   user: '/user'
-}
+};

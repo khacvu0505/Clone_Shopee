@@ -1,9 +1,9 @@
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useState } from 'react';
 
 export interface InputNumberProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  errorMessage?: string
-  className?: string
-  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined
+  errorMessage?: string;
+  className?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
 }
 
 const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumberInner(
@@ -18,19 +18,19 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
   },
   ref
 ) {
-  const [localValue, setLocalValue] = useState<string>(value as string)
+  const [localValue, setLocalValue] = useState<string>(value as string);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    const reg = /^\d+$/
+    const { value } = event.target;
+    const reg = /^\d+$/;
     if (reg.test(value) || value === '') {
       // Thực thi onChange callback từ bên ngoài truyền vào props
-      onChange && onChange(event)
+      onChange && onChange(event);
 
       // Cập nhật local value state
-      setLocalValue(value)
+      setLocalValue(value);
     }
-  }
+  };
 
   return (
     <div className={className}>
@@ -43,6 +43,6 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
       />
       {errorMessage && <div className='mt-1 min-h-[1.2rem] text-sm italic text-red-600'>{errorMessage}</div>}
     </div>
-  )
-})
-export default InputNumber
+  );
+});
+export default InputNumber;

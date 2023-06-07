@@ -10,9 +10,16 @@ module.exports = {
   },
   theme: {
     extend: {
+      // USE to custom color, spacing of tailwind css
       colors: {
         orange: '#ee4d2d',
         white: '#fff'
+      },
+      spacing: {
+        sm: '8px',
+        md: '12px',
+        lg: '16px',
+        xl: '24px'
       }
     }
   },

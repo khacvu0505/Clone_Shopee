@@ -1,93 +1,93 @@
-import React, { useContext, useEffect, useMemo } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { buyProduct, deletePurchase, getPurchaseList, updatePurchase } from 'src/api/purchase.api'
-import { PurchaseStatus } from 'src/constant/purchase'
-import { Link, useLocation } from 'react-router-dom'
-import { generateNameId, formatCurrency } from 'src/utils/utils'
-import QuantityController from 'src/components/QuantityController'
-import Button from 'src/components/Button'
-import { ExtendedPurchases, ProductAddToPurchase } from 'src/types/purchase.type'
-import produce from 'immer'
-import { useQueryClientHook } from 'src/hooks/useQueryClient'
-import { toast } from 'react-toastify'
-import { AppContext } from 'src/contexts/app.context'
-import Loading from 'src/components/Loading'
+import React, { useContext, useEffect, useMemo } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { buyProduct, deletePurchase, getPurchaseList, updatePurchase } from 'src/api/purchase.api';
+import { PurchaseStatus } from 'src/constant/purchase';
+import { Link, useLocation } from 'react-router-dom';
+import { generateNameId, formatCurrency } from 'src/utils/utils';
+import QuantityController from 'src/components/QuantityController';
+import Button from 'src/components/Button';
+import { ExtendedPurchases, ProductAddToPurchase } from 'src/types/purchase.type';
+import produce from 'immer';
+import { useQueryClientHook } from 'src/hooks/useQueryClient';
+import { toast } from 'react-toastify';
+import { AppContext } from 'src/contexts/app.context';
+import Loading from 'src/components/Loading';
 
 export default function Cart() {
-  const { extendedPurchases, setExtendedPurchases } = useContext(AppContext)
+  const { extendedPurchases, setExtendedPurchases } = useContext(AppContext);
 
-  const { state } = useLocation()
-  const purchaseId = (state as { purchaseId: string | null })?.purchaseId
+  const { state } = useLocation();
+  const purchaseId = (state as { purchaseId: string | null })?.purchaseId;
 
-  const queryClient = useQueryClientHook()
+  const queryClient = useQueryClientHook();
 
   const { data: purchaseInCardData, isLoading } = useQuery({
     queryKey: ['purchases', PurchaseStatus.inCart],
     queryFn: () => getPurchaseList(PurchaseStatus.inCart)
-  })
+  });
 
   const purchaseInCard = useMemo(() => {
-    return purchaseInCardData?.data.data ?? []
-  }, [purchaseInCardData])
+    return purchaseInCardData?.data.data ?? [];
+  }, [purchaseInCardData]);
 
   const updatePurchasesMutation = useMutation({
     mutationKey: ['updatePurchases'],
     mutationFn: (body: ProductAddToPurchase) => updatePurchase(body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
+      queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] });
     }
-  })
+  });
 
   const deletePurchasesMutation = useMutation({
     mutationFn: (body: string[]) => deletePurchase(body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
+      queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] });
     }
-  })
+  });
 
   const buyPurchasesMutation = useMutation({
     mutationFn: (body: ProductAddToPurchase[]) => buyProduct(body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
+      queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] });
       toast.success('Mua sản phẩm thành công', {
         autoClose: 1500
-      })
+      });
     }
-  })
+  });
 
-  const isCheckedAll = extendedPurchases.length > 0 ? extendedPurchases.every((item) => item.checked) : false
+  const isCheckedAll = extendedPurchases.length > 0 ? extendedPurchases.every((item) => item.checked) : false;
 
   const listProductChoose = useMemo(() => {
     return extendedPurchases.reduce((accumulator: string[], currentValue: ExtendedPurchases) => {
       if (currentValue.checked) {
-        accumulator.push(currentValue._id)
+        accumulator.push(currentValue._id);
       }
-      return accumulator
-    }, [])
-  }, [extendedPurchases])
+      return accumulator;
+    }, []);
+  }, [extendedPurchases]);
 
   const totalCheckedPurchasePrice = useMemo(() => {
     return extendedPurchases.reduce((accumulator: number, currentValue: ExtendedPurchases) => {
       if (currentValue.checked) {
-        accumulator += currentValue.buy_count * currentValue.price
+        accumulator += currentValue.buy_count * currentValue.price;
       }
-      return accumulator
-    }, 0)
-  }, [extendedPurchases])
+      return accumulator;
+    }, 0);
+  }, [extendedPurchases]);
 
   const totalCheckedPurchasePriceBeforeDiscount = useMemo(() => {
     return extendedPurchases.reduce((accumulator: number, currentValue: ExtendedPurchases) => {
       if (currentValue.checked) {
-        accumulator += currentValue.buy_count * currentValue.price_before_discount
+        accumulator += currentValue.buy_count * currentValue.price_before_discount;
       }
-      return accumulator
-    }, 0)
-  }, [extendedPurchases])
+      return accumulator;
+    }, 0);
+  }, [extendedPurchases]);
 
   useEffect(() => {
     if (purchaseInCard.length > 0) {
       const value = purchaseInCard?.map((item, index) => {
-        const isHavePurchaseId = purchaseId === item._id
+        const isHavePurchaseId = purchaseId === item._id;
         return {
           ...item,
           checked: isHavePurchaseId
@@ -95,58 +95,58 @@ export default function Cart() {
             : purchaseInCard.length === extendedPurchases.length
             ? extendedPurchases[index]?.checked || false
             : false
-        }
-      })
-      setExtendedPurchases(value)
+        };
+      });
+      setExtendedPurchases(value);
     } else {
-      setExtendedPurchases([])
+      setExtendedPurchases([]);
     }
-  }, [purchaseInCard, purchaseId])
+  }, [purchaseInCard, purchaseId]);
 
   useEffect(() => {
     return () => {
-      history.replaceState(null, '')
-    }
-  }, [])
+      history.replaceState(null, '');
+    };
+  }, []);
 
   const handleCheck = (purchaseIndex: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setExtendedPurchases(
       produce((draf) => {
-        draf[purchaseIndex].checked = event.target.checked
+        draf[purchaseIndex].checked = event.target.checked;
       })
-    )
-  }
+    );
+  };
 
   const handleCheckAll = () => {
-    setExtendedPurchases(extendedPurchases.map((item) => ({ ...item, checked: !isCheckedAll })))
-  }
+    setExtendedPurchases(extendedPurchases.map((item) => ({ ...item, checked: !isCheckedAll })));
+  };
 
   const handleQuantity = (purchaseIndex: number, value: number, isDisable?: boolean) => {
-    if (isDisable) return
-    const purchase = extendedPurchases[purchaseIndex]
-    updatePurchasesMutation.mutate({ product_id: purchase.product._id, buy_count: value })
-  }
+    if (isDisable) return;
+    const purchase = extendedPurchases[purchaseIndex];
+    updatePurchasesMutation.mutate({ product_id: purchase.product._id, buy_count: value });
+  };
 
   const handleChangeInputQuantity = (purchaseIndex: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = +event.target.value
-    const maxValue = extendedPurchases[purchaseIndex].product.quantity
-    const valueChange = value > maxValue ? maxValue : value
+    const value = +event.target.value;
+    const maxValue = extendedPurchases[purchaseIndex].product.quantity;
+    const valueChange = value > maxValue ? maxValue : value;
     setExtendedPurchases(
       produce((draf) => {
-        draf[purchaseIndex].buy_count = valueChange
+        draf[purchaseIndex].buy_count = valueChange;
       })
-    )
-  }
+    );
+  };
 
   const handleDelete = (purchaseIndex: number) => () => {
-    const purchaseId = extendedPurchases[purchaseIndex]._id
-    deletePurchasesMutation.mutate([purchaseId])
-  }
+    const purchaseId = extendedPurchases[purchaseIndex]._id;
+    deletePurchasesMutation.mutate([purchaseId]);
+  };
 
   const handleDeleteMulti = () => {
-    const purchaseIds = listProductChoose
-    deletePurchasesMutation.mutate(purchaseIds)
-  }
+    const purchaseIds = listProductChoose;
+    deletePurchasesMutation.mutate(purchaseIds);
+  };
 
   const handleBuyPurchase = () => {
     const listProduct = extendedPurchases.reduce((acc: ProductAddToPurchase[], current: ExtendedPurchases) => {
@@ -154,14 +154,14 @@ export default function Cart() {
         acc.push({
           product_id: current.product._id,
           buy_count: current.buy_count
-        })
+        });
       }
-      return acc
-    }, [])
-    listProduct.length > 0 && buyPurchasesMutation.mutate(listProduct)
-  }
+      return acc;
+    }, []);
+    listProduct.length > 0 && buyPurchasesMutation.mutate(listProduct);
+  };
 
-  if (isLoading) return <Loading />
+  if (isLoading) return <Loading />;
 
   return (
     <div className='min-w-[1100px] bg-neutral-100 py-16'>
@@ -317,5 +317,5 @@ export default function Cart() {
         </div>
       )}
     </div>
-  )
+  );
 }

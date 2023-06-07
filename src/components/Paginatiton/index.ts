@@ -1,3 +1,3 @@
-import Paginatiton from './Paginatiton'
+import Paginatiton from './Paginatiton';
 
-export default Paginatiton
+export default Paginatiton;

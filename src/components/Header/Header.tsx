@@ -1,29 +1,28 @@
-import React from 'react'
-import Popover from 'src/components/Popover'
-import { useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
-import { AppContext } from 'src/contexts/app.context'
-import { path } from 'src/constant/path'
-import { PurchaseStatus } from 'src/constant/purchase'
-import { getPurchaseList } from 'src/api/purchase.api'
-import { formatCurrency } from 'src/utils/utils'
-import NavHeader from '../NavHeader'
-import useSearchProduct from 'src/hooks/useSearchProduct'
-import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin'
+import React from 'react';
+import Popover from 'src/components/Popover';
+import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { path } from 'src/constant/path';
+import { PurchaseStatus } from 'src/constant/purchase';
+import { getPurchaseList } from 'src/api/purchase.api';
+import { formatCurrency } from 'src/utils/utils';
+import NavHeader from '../NavHeader';
+import useSearchProduct from 'src/hooks/useSearchProduct';
+import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin';
 
-const MAX_PURCHASES = 5
+const MAX_PURCHASES = 5;
 
 export default function Header() {
-  const { onSubmitSearch, register } = useSearchProduct()
-  const islogin = useVerifyIsLogin()
+  const { onSubmitSearch, register } = useSearchProduct();
+  const islogin = useVerifyIsLogin();
 
   const { data: purchaseInCardData } = useQuery({
     queryKey: ['purchases', PurchaseStatus.inCart],
     queryFn: () => getPurchaseList(PurchaseStatus.inCart),
     enabled: islogin
-  })
+  });
 
-  const purchaseInCard = purchaseInCardData?.data.data ?? []
+  const purchaseInCard = purchaseInCardData?.data.data ?? [];
 
   return (
     <div className='min-w-[1100px] bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2'>
@@ -130,5 +129,5 @@ export default function Header() {
         </div>
       </div>
     </div>
-  )
+  );
 }

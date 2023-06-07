@@ -1,68 +1,67 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { schema, Schema } from 'src/utils/rules'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { AppContext } from 'src/contexts/app.context'
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { schema, Schema } from 'src/utils/rules';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { AppContext } from 'src/contexts/app.context';
 
 // React Query
-import { useMutation } from '@tanstack/react-query'
-import { login } from 'src/api/auth.api'
-import { isAxiosUnprocessableEntity } from 'src/utils/utils'
-import { ErrorResponse } from 'src/types/utils.type'
-import Input from 'src/components/Input'
-import Button from 'src/components/Button'
-import { path } from 'src/constant/path'
+import { useMutation } from '@tanstack/react-query';
+import { login } from 'src/api/auth.api';
+import { isAxiosUnprocessableEntity } from 'src/utils/utils';
+import { ErrorResponse } from 'src/types/utils.type';
+import Input from 'src/components/Input';
+import Button from 'src/components/Button';
+import { path } from 'src/constant/path';
 
 // interface IFormInput {
 //   email: string
 //   password: string
 // }
-type IFormInput = Pick<Schema, 'email' | 'password'>
+type IFormInput = Pick<Schema, 'email' | 'password'>;
 
-const loginSchema = schema.pick(['email', 'password'])
+const loginSchema = schema.pick(['email', 'password']);
 // const loginSchema = schema.omit(['confirm_password'])
 export default function Login() {
-  const { setIsAuthenticated, setProfile } = React.useContext(AppContext)
-  const navigate = useNavigate()
+  const { setIsAuthenticated, setProfile } = React.useContext(AppContext);
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    watch,
     setError,
     formState: { errors }
   } = useForm<IFormInput>({
     resolver: yupResolver(loginSchema)
-  })
+  });
 
   // Mutations
   const loginMutation = useMutation({
     mutationFn: (body: IFormInput) => login(body)
-  })
+  });
   // handleSubmitForm
   const onSubmit: SubmitHandler<IFormInput> = (body) => {
     loginMutation.mutate(body, {
       onSuccess: (data) => {
-        setIsAuthenticated(true)
-        setProfile(data.data.data.user)
-        navigate(path.home)
+        setIsAuthenticated(true);
+        setProfile(data.data.data.user);
+        navigate(path.home);
       },
       onError: (error) => {
         if (isAxiosUnprocessableEntity<ErrorResponse<IFormInput>>(error)) {
-          const formError = error.response?.data.data
+          const formError = error.response?.data.data;
           if (formError) {
             Object.keys(formError).forEach((key) => {
               setError(key as keyof IFormInput, {
                 message: formError[key as keyof IFormInput],
                 type: 'Server'
-              })
-            })
+              });
+            });
           }
         }
       }
-    })
-  }
+    });
+  };
 
   return (
     <div className='bg-orange'>
@@ -107,5 +106,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  )
+  );
 }

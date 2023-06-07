@@ -1,7 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useQueryClientHook = () => {
   // Get QueryClient from the context
-  const queryClient = useQueryClient()
-  return queryClient
-}
+  const queryClient = useQueryClient();
+  return queryClient;
+};

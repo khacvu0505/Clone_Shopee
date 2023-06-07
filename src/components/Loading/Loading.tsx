@@ -1,5 +1,5 @@
-import React from 'react'
-import './Loading.css'
+import React from 'react';
+import './Loading.css';
 
 const Loading = () => {
   return (
@@ -8,7 +8,7 @@ const Loading = () => {
       <div className='inner two' />
       <div className='inner three' />
     </div>
-  )
-}
+  );
+};
 
-export default Loading
+export default Loading;

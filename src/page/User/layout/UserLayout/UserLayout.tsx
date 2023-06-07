@@ -1,7 +1,7 @@
-import React from 'react'
-import UserSideNav from '../../components/UserSideNav'
+import React from 'react';
+import UserSideNav from '../../components/UserSideNav';
 interface UserLayoutProps {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 export default function UserLayout({ children }: UserLayoutProps) {
   return (
@@ -15,5 +15,5 @@ export default function UserLayout({ children }: UserLayoutProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { range } from 'lodash'
+import React, { useEffect, useState } from 'react';
+import { range } from 'lodash';
 
 interface Props {
-  onChange?: (value: Date) => void
-  value?: Date
-  errorMessage?: string
+  onChange?: (value: Date) => void;
+  value?: Date;
+  errorMessage?: string;
 }
 
 const initialState = {
   date: 1,
   month: 0,
   year: 1990
-}
+};
 
 export default function DateSelect({ onChange, value, errorMessage }: Props) {
-  const [date, setDate] = useState(initialState)
+  const [date, setDate] = useState(initialState);
 
   useEffect(() => {
     if (value) {
@@ -22,23 +22,23 @@ export default function DateSelect({ onChange, value, errorMessage }: Props) {
         date: value?.getDate(),
         month: value?.getMonth(),
         year: value?.getFullYear()
-      })
+      });
     } else {
-      setDate(initialState)
+      setDate(initialState);
     }
-  }, [value])
+  }, [value]);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value: valueFromSelect, name } = event.target
+    const { value: valueFromSelect, name } = event.target;
     const newDate = {
       date: value?.getDate() || date.date,
       month: value?.getMonth() || date.month,
       year: value?.getFullYear() || date.year,
       [name]: Number(valueFromSelect)
-    }
-    setDate(newDate)
-    onChange && onChange(new Date(newDate.year, newDate.month, newDate.date))
-  }
+    };
+    setDate(newDate);
+    onChange && onChange(new Date(newDate.year, newDate.month, newDate.date));
+  };
 
   return (
     <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
@@ -88,5 +88,5 @@ export default function DateSelect({ onChange, value, errorMessage }: Props) {
         <div className='mt-1 min-h-[1.25rem] text-sm text-red-600'>{errorMessage}</div>
       </div>
     </div>
-  )
+  );
 }

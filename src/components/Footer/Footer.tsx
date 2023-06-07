@@ -1,5 +1,5 @@
-import { useQueryClientHook } from 'src/hooks/useQueryClient'
-import { useIsFetching } from '@tanstack/react-query'
+import { useQueryClientHook } from 'src/hooks/useQueryClient';
+import { useIsFetching } from '@tanstack/react-query';
 
 export default function Footer() {
   // const queryClient = useQueryClientHook()
@@ -7,9 +7,9 @@ export default function Footer() {
   // console.log('isFetching', isFetching())
 
   // if (isFetching()) return
-  const isFetching = useIsFetching()
+  const isFetching = useIsFetching();
 
-  if (isFetching) return <></>
+  if (isFetching) return <></>;
 
   return (
     <footer className='bg-neutral-100 py-16'>
@@ -41,5 +41,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

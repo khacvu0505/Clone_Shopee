@@ -1,16 +1,16 @@
-import { useQuery } from '@tanstack/react-query'
-import React, { useMemo } from 'react'
-import { Link, createSearchParams } from 'react-router-dom'
-import { getPurchaseList } from 'src/api/purchase.api'
-import { path } from 'src/constant/path'
-import { PurchaseStatus } from 'src/constant/purchase'
-import useQueryParams from 'src/hooks/useQueryParams'
-import { PurchaseListStatus } from 'src/types/purchase.type'
-import { formatCurrency, generateNameId } from 'src/utils/utils'
+import { useQuery } from '@tanstack/react-query';
+import React, { useMemo } from 'react';
+import { Link, createSearchParams } from 'react-router-dom';
+import { getPurchaseList } from 'src/api/purchase.api';
+import { path } from 'src/constant/path';
+import { PurchaseStatus } from 'src/constant/purchase';
+import useQueryParams from 'src/hooks/useQueryParams';
+import { PurchaseListStatus } from 'src/types/purchase.type';
+import { formatCurrency, generateNameId } from 'src/utils/utils';
 
 export default function HistoryPurchase() {
-  const queryParams: { status?: string } = useQueryParams()
-  const status = (Number(queryParams.status) || PurchaseStatus.all) as PurchaseListStatus
+  const queryParams: { status?: string } = useQueryParams();
+  const status = (Number(queryParams.status) || PurchaseStatus.all) as PurchaseListStatus;
 
   const purchaseTabs = useMemo(() => {
     return [
@@ -20,15 +20,15 @@ export default function HistoryPurchase() {
       { status: PurchaseStatus.inProgress, name: 'Đang giao' },
       { status: PurchaseStatus.delivered, name: 'Đã giao' },
       { status: PurchaseStatus.canceled, name: 'Đã hủy' }
-    ]
-  }, [])
+    ];
+  }, []);
 
   const { data: purchaseInCardData } = useQuery({
     queryKey: ['purchases', status],
     queryFn: () => getPurchaseList(status)
-  })
+  });
 
-  const purchaseInCart = purchaseInCardData?.data.data
+  const purchaseInCart = purchaseInCardData?.data.data;
 
   return (
     <div>
@@ -85,5 +85,5 @@ export default function HistoryPurchase() {
         </div>
       </div>
     </div>
-  )
+  );
 }

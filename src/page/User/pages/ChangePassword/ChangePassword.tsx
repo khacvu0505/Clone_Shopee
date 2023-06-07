@@ -1,19 +1,19 @@
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm } from 'react-hook-form'
-import React from 'react'
-import { UserSchema, userSchema } from 'src/utils/rules'
-import { useMutation } from '@tanstack/react-query'
-import { updateProfile } from 'src/api/user.api'
-import { toast } from 'react-toastify'
-import { omit } from 'lodash'
-import { isAxiosUnprocessableEntity } from 'src/utils/utils'
-import { ErrorResponse } from 'src/types/utils.type'
-import Input from 'src/components/Input'
-import Button from 'src/components/Button'
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import React from 'react';
+import { UserSchema, userSchema } from 'src/utils/rules';
+import { useMutation } from '@tanstack/react-query';
+import { updateProfile } from 'src/api/user.api';
+import { toast } from 'react-toastify';
+import { omit } from 'lodash';
+import { isAxiosUnprocessableEntity } from 'src/utils/utils';
+import { ErrorResponse } from 'src/types/utils.type';
+import Input from 'src/components/Input';
+import Button from 'src/components/Button';
 
-type FormData = Pick<UserSchema, 'password' | 'confirm_password' | 'new_password'>
+type FormData = Pick<UserSchema, 'password' | 'confirm_password' | 'new_password'>;
 
-const changePasswordSchema = userSchema.pick(['password', 'confirm_password', 'new_password'])
+const changePasswordSchema = userSchema.pick(['password', 'confirm_password', 'new_password']);
 
 export default function ChangePassword() {
   const {
@@ -30,39 +30,39 @@ export default function ChangePassword() {
       new_password: ''
     },
     resolver: yupResolver(changePasswordSchema)
-  })
+  });
 
   const updateProfileMutation = useMutation({
     mutationFn: updateProfile
-  })
+  });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       updateProfileMutation.mutate(omit(data, ['confirm_password']), {
         onSuccess: (response) => {
-          reset()
+          reset();
           toast.success(response.data.message, {
             autoClose: 1500
-          })
+          });
         },
         onError: (error) => {
           if (isAxiosUnprocessableEntity<ErrorResponse<FormData>>(error)) {
-            const formError = error.response?.data.data
+            const formError = error.response?.data.data;
             if (formError) {
               Object.keys(formError).forEach((key) => {
                 setError(key as keyof FormData, {
                   message: formError[key as keyof FormData] as string | undefined,
                   type: 'Server'
-                })
-              })
+                });
+              });
             }
           }
         }
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  })
+  });
 
   return (
     <div className='rounded-sm bg-white px-2 pb-10 shadow md:px-7 md:pb-20'>
@@ -127,5 +127,5 @@ export default function ChangePassword() {
         </div>
       </form>
     </div>
-  )
+  );
 }

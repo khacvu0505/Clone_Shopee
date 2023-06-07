@@ -1,47 +1,47 @@
-import React from 'react'
-import Popover from '../Popover'
-import { Link } from 'react-router-dom'
-import { AppContext } from 'src/contexts/app.context'
-import { path } from 'src/constant/path'
-import { PurchaseStatus } from 'src/constant/purchase'
-import { logout } from 'src/api/auth.api'
-import { useQueryClientHook } from 'src/hooks/useQueryClient'
-import { useMutation } from '@tanstack/react-query'
-import userImg from 'src/images/userImg.jpg'
-import { getUrlAvatar } from 'src/utils/utils'
-import { useTranslation } from 'react-i18next'
-import { locales } from 'src/i18n/i18n'
-import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin'
+import React from 'react';
+import Popover from '../Popover';
+import { Link } from 'react-router-dom';
+import { AppContext } from 'src/contexts/app.context';
+import { path } from 'src/constant/path';
+import { PurchaseStatus } from 'src/constant/purchase';
+import { logout } from 'src/api/auth.api';
+import { useQueryClientHook } from 'src/hooks/useQueryClient';
+import { useMutation } from '@tanstack/react-query';
+import userImg from 'src/images/userImg.jpg';
+import { getUrlAvatar } from 'src/utils/utils';
+import { useTranslation } from 'react-i18next';
+import { locales } from 'src/i18n/i18n';
+import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin';
 
 // type typeLocales = 'vn' | 'en'
 export default function NavHeader() {
-  const isLogin = useVerifyIsLogin()
+  const isLogin = useVerifyIsLogin();
 
-  const { setIsAuthenticated, profile, setProfile } = React.useContext(AppContext)
-  const queryClient = useQueryClientHook()
+  const { setIsAuthenticated, profile, setProfile } = React.useContext(AppContext);
+  const queryClient = useQueryClientHook();
 
-  const { i18n } = useTranslation()
-  const curerntLanguage = locales[i18n.language as keyof typeof locales]
+  const { i18n } = useTranslation();
+  const curerntLanguage = locales[i18n.language as keyof typeof locales];
 
   // Mutations
   const logoutMutation = useMutation({
     mutationFn: logout
-  })
+  });
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
-        setIsAuthenticated(false)
-        setProfile(null)
-        queryClient.removeQueries(['purchases', PurchaseStatus.inCart])
-        queryClient.removeQueries(['profile'])
+        setIsAuthenticated(false);
+        setProfile(null);
+        queryClient.removeQueries(['purchases', PurchaseStatus.inCart]);
+        queryClient.removeQueries(['profile']);
       }
-    })
-  }
+    });
+  };
 
   const handleChangeLanguage = (lng: 'en' | 'vn') => {
-    i18n.changeLanguage(lng)
-  }
+    i18n.changeLanguage(lng);
+  };
 
   return (
     <div className='flex min-w-[1100px] justify-end text-white'>
@@ -130,5 +130,5 @@ export default function NavHeader() {
         </div>
       )}
     </div>
-  )
+  );
 }

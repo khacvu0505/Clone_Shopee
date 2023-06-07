@@ -1,12 +1,12 @@
-import React, { useContext } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { path } from 'src/constant/path'
-import { AppContext } from 'src/contexts/app.context'
-import userImg from 'src/images/userImg.jpg'
-import { getUrlAvatar } from 'src/utils/utils'
+import React, { useContext } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { path } from 'src/constant/path';
+import { AppContext } from 'src/contexts/app.context';
+import userImg from 'src/images/userImg.jpg';
+import { getUrlAvatar } from 'src/utils/utils';
 
 export default function UserSideNav() {
-  const { profile } = useContext(AppContext)
+  const { profile } = useContext(AppContext);
   return (
     <div>
       <div className='flex items-center border-b border-b-gray-200 py-4'>
@@ -64,5 +64,5 @@ export default function UserSideNav() {
         </NavLink>
       </div>
     </div>
-  )
+  );
 }

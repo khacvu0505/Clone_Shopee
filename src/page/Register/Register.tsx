@@ -1,36 +1,37 @@
-import React from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
-import Input from 'src/components/Input'
+import React from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import Input from 'src/components/Input';
 // import { getRules } from 'src/utils/rules'
-import { schema, Schema } from 'src/utils/rules'
-import { yupResolver } from '@hookform/resolvers/yup'
+import { schema, Schema } from 'src/utils/rules';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 // React Query
-import { useMutation } from '@tanstack/react-query'
-import { registerAccount } from 'src/api/auth.api'
+import { useMutation } from '@tanstack/react-query';
+
+import { registerAccount } from 'src/api/auth.api';
 
 // Lodash
-import { omit } from 'lodash'
+import { omit } from 'lodash';
 
 // Utils
-import { isAxiosUnprocessableEntity } from 'src/utils/utils'
-import { ErrorResponse } from 'src/types/utils.type'
-import { AppContext } from 'src/contexts/app.context'
-import Button from 'src/components/Button'
-import { path } from 'src/constant/path'
+import { isAxiosUnprocessableEntity } from 'src/utils/utils';
+import { ErrorResponse } from 'src/types/utils.type';
+import { AppContext } from 'src/contexts/app.context';
+import Button from 'src/components/Button';
+import { path } from 'src/constant/path';
 
 // interface IFormInput {
 //   email: string
 //   password: string
 //   confirm_password: string
 // }
-type IFormInput = Pick<Schema, 'email' | 'password' | 'confirm_password'>
-const loginSchema = schema.pick(['email', 'password', 'confirm_password'])
+type IFormInput = Pick<Schema, 'email' | 'password' | 'confirm_password'>;
+const loginSchema = schema.pick(['email', 'password', 'confirm_password']);
 
 export default function Register() {
-  const navigate = useNavigate()
-  const { setIsAuthenticated } = React.useContext(AppContext)
+  const navigate = useNavigate();
+  const { setIsAuthenticated } = React.useContext(AppContext);
 
   const {
     register,
@@ -40,37 +41,37 @@ export default function Register() {
     formState: { errors }
   } = useForm<IFormInput>({
     resolver: yupResolver(loginSchema)
-  })
+  });
 
   // const rules = getRules(getValues)
 
   // Mutations
   const registerAccountMutation = useMutation({
     mutationFn: (body: Omit<IFormInput, 'confirm_password'>) => registerAccount(body)
-  })
+  });
 
   // handleSubmitForm
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     registerAccountMutation.mutate(omit(data, ['confirm_password']), {
       onSuccess: () => {
-        setIsAuthenticated(true)
-        navigate(path.home)
+        setIsAuthenticated(true);
+        navigate(path.home);
       },
       onError: (error) => {
         if (isAxiosUnprocessableEntity<ErrorResponse<Omit<IFormInput, 'confirm_password'>>>(error)) {
-          const formError = error.response?.data.data
+          const formError = error.response?.data.data;
           if (formError) {
             Object.keys(formError).forEach((key) => {
               setError(key as keyof Omit<IFormInput, 'confirm_password'>, {
                 message: formError[key as keyof Omit<IFormInput, 'confirm_password'>],
                 type: 'Server'
-              })
-            })
+              });
+            });
           }
         }
       }
-    })
-  }
+    });
+  };
 
   return (
     <div className='bg-orange'>
@@ -127,5 +128,5 @@ export default function Register() {
         </div>
       </div>
     </div>
-  )
+  );
 }

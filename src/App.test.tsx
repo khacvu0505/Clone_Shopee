@@ -1,24 +1,24 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from 'vitest';
 // app.test.js
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import matchers from '@testing-library/jest-dom/matchers'
-import App from './App'
-import { BrowserRouter, MemoryRouter } from 'react-router-dom'
-import { logScreen, renderWithRouter } from './utils/__test__/testUtils'
-import { path } from './constant/path'
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import matchers from '@testing-library/jest-dom/matchers';
+import App from './App';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { logScreen, renderWithRouter } from './utils/__test__/testUtils';
+import { path } from './constant/path';
 
 // test the same with it
 
 // Chỗ này là bởi vì đang dùng vitest => nên sẽ khác 1 tí
-expect.extend(matchers)
+expect.extend(matchers);
 
 describe('App', () => {
   test('App render và chuyển trang', async () => {
     // Chỗ này render component App
     render(<App />, {
       wrapper: BrowserRouter
-    })
+    });
 
     /**
      * waitFor: sẽ run callback 1 vài lần
@@ -30,48 +30,48 @@ describe('App', () => {
     // veryfi vào đúng trang chủ
     await waitFor(
       () => {
-        expect(document.querySelector('title')?.textContent).toBe('Trang chủ |Shopee Clone')
+        expect(document.querySelector('title')?.textContent).toBe('Trang chủ |Shopee Clone');
       },
       {
         timeout: 2000
       }
-    )
+    );
 
     // Verify chuyển trang
-    const user = userEvent.setup()
-    await user.click(screen.getByText('Đăng nhập'))
+    const user = userEvent.setup();
+    await user.click(screen.getByText('Đăng nhập'));
     await waitFor(
       () => {
-        expect(screen.queryByText('Bạn mới biết đến Shopee?')).toBeInTheDocument()
+        expect(screen.queryByText('Bạn mới biết đến Shopee?')).toBeInTheDocument();
       },
       {
         timeout: 2000
       }
-    )
+    );
 
     // Chỗ này sẽ in ra cho chúng ta thấy là render ra cái gì
-    screen.debug(document.parentElement as HTMLElement, 999999)
-  })
+    screen.debug(document.parentElement as HTMLElement, 999999);
+  });
 
   test('Test Page Not Found', async () => {
-    const badRoute = '/some/bad/route'
+    const badRoute = '/some/bad/route';
 
     // use <MemoryRouter> when you want to manually control the history
     render(
       <MemoryRouter initialEntries={[badRoute]}>
         <App />
       </MemoryRouter>
-    )
+    );
 
     await waitFor(() => {
       // check text is Page Not Fount contain in the screen
       // Chữ "i" chỗ này là không phân biệt chữ hoa, thường
-      expect(screen.getByText(/Page Not Found/i)).toBeInTheDocument()
-    })
+      expect(screen.getByText(/Page Not Found/i)).toBeInTheDocument();
+    });
 
     // func console.log screen => debug terminal
-    await logScreen()
-  })
+    await logScreen();
+  });
 
   test('Render Register Page', async () => {
     // option 1
@@ -88,15 +88,15 @@ describe('App', () => {
     // )
 
     // option 3: viết 1 function bên utils
-    renderWithRouter({ route: path.register })
+    renderWithRouter({ route: path.register });
 
     await waitFor(() => {
       // check text is Page Not Fount contain in the screen
       // Chữ "i" chỗ này là không phân biệt chữ hoa, thường
-      expect(screen.getByText(/Bạn đã có tài khoản chưa/i)).toBeInTheDocument()
-    })
+      expect(screen.getByText(/Bạn đã có tài khoản chưa/i)).toBeInTheDocument();
+    });
 
     // func console.log screen => debug terminal
     // await logScreen()
-  })
-})
+  });
+});

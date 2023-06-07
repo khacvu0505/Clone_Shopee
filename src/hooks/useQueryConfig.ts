@@ -1,14 +1,13 @@
-import React from 'react'
-import useQueryParams from './useQueryParams'
+import useQueryParams from './useQueryParams';
 // import { QueryConfig } from 'src/page/ProductList/ProductList'
-import { isUndefined, omitBy } from 'lodash'
-import { ProductListConfig } from 'src/types/product.type'
+import { isUndefined, omitBy } from 'lodash';
+import { ProductListConfig } from 'src/types/product.type';
 
 export type QueryConfig = {
-  [key in keyof ProductListConfig]: string
-}
+  [key in keyof ProductListConfig]: string;
+};
 export default function useQueryConfig() {
-  const queryParams = useQueryParams()
+  const queryParams = useQueryParams();
   const queryConfig: QueryConfig = omitBy(
     {
       page: queryParams.page || '1',
@@ -23,6 +22,6 @@ export default function useQueryConfig() {
       rating_filter: queryParams.rating_filter
     },
     isUndefined
-  )
-  return queryConfig
+  );
+  return queryConfig;
 }

@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
-import InputNumber, { InputNumberProps } from '../InputNumber'
+import React, { useState } from 'react';
+import InputNumber, { InputNumberProps } from '../InputNumber';
 
 interface QuantityProps extends InputNumberProps {
-  max?: number
-  onIncrease?: (value: number) => void
-  onDecrease?: (value: number) => void
-  onType?: (event: React.ChangeEvent<HTMLInputElement>) => void
-  onFocusOut?: (value: number) => void
-  classNameWrapper?: string
+  max?: number;
+  onIncrease?: (value: number) => void;
+  onDecrease?: (value: number) => void;
+  onType?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocusOut?: (value: number) => void;
+  classNameWrapper?: string;
 }
 
 export default function QuantityController({
@@ -20,46 +20,46 @@ export default function QuantityController({
   value,
   ...rest
 }: QuantityProps) {
-  const [localValue, setLocalValue] = useState<number>(1)
+  const [localValue, setLocalValue] = useState<number>(1);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = Number(event.target.value)
+    let value = Number(event.target.value);
     if (max !== undefined && value > max) {
-      value = max
+      value = max;
     } else if (value < 1) {
-      value = undefined as any
+      value = undefined as any;
     }
-    onType && onType(event)
-    setLocalValue(value)
-  }
+    onType && onType(event);
+    setLocalValue(value);
+  };
 
   const increase = () => {
-    let _value = Number(value) + 1
+    let _value = Number(value) + 1;
 
     if (max !== undefined && _value > max) {
-      _value = max
+      _value = max;
     }
-    setLocalValue(_value)
-    onIncrease && onIncrease(_value)
-  }
+    setLocalValue(_value);
+    onIncrease && onIncrease(_value);
+  };
 
   const decrease = () => {
-    let _value = Number(value) - 1
+    let _value = Number(value) - 1;
     if (_value <= 1) {
-      _value = 1
+      _value = 1;
     }
-    setLocalValue(_value)
-    onDecrease && onDecrease(_value)
-  }
+    setLocalValue(_value);
+    onDecrease && onDecrease(_value);
+  };
 
   const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
-    const value = +event.target.value || 1
+    const value = +event.target.value || 1;
     if (onFocusOut) {
-      onFocusOut(value)
-      return
+      onFocusOut(value);
+      return;
     }
-    setLocalValue(value)
-  }
+    setLocalValue(value);
+  };
 
   return (
     <div className={'flex items-center' + classNameWrapper}>
@@ -102,5 +102,5 @@ export default function QuantityController({
         </svg>
       </button>
     </div>
-  )
+  );
 }

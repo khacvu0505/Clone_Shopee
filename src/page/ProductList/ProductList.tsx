@@ -1,14 +1,13 @@
-import React from 'react'
-import AsideFilter from './components/AsideFilter'
-import SortProductList from './components/SortProductList'
-import Product from './components/Product/Product'
-import { useQuery } from '@tanstack/react-query'
-import { getProductList } from 'src/api/product.api'
-import { getCategoryList } from 'src/api/category.api'
-import Paginatiton from 'src/components/Paginatiton'
-import { ProductListConfig } from 'src/types/product.type'
-import useQueryConfig from 'src/hooks/useQueryConfig'
-import Loading from 'src/components/Loading'
+import React from 'react';
+import AsideFilter from './components/AsideFilter';
+import SortProductList from './components/SortProductList';
+import Product from './components/Product/Product';
+import { useQuery } from '@tanstack/react-query';
+import { getProductList } from 'src/api/product.api';
+import Paginatiton from 'src/components/Paginatiton';
+import { ProductListConfig } from 'src/types/product.type';
+import useQueryConfig from 'src/hooks/useQueryConfig';
+import Loading from 'src/components/Loading';
 
 // rangePage = 2
 // [1] 2 3 ... 19 20
@@ -37,19 +36,16 @@ import Loading from 'src/components/Loading'
 // 1 2 3 4  ...  [6] 7 8 9 ... 18 19 20
 
 export default function ProductList() {
-  const queryConfig = useQueryConfig()
+  const queryConfig = useQueryConfig();
 
   const { data: productList, isLoading } = useQuery({
     queryKey: ['productList', queryConfig],
     queryFn: () => getProductList(queryConfig as ProductListConfig),
     keepPreviousData: true,
     staleTime: 3 * 60 * 1000
-  })
-  const { data: dataCategory } = useQuery({
-    queryKey: ['categoryList'],
-    queryFn: getCategoryList
-  })
-  if (isLoading) return <Loading />
+  });
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className='min-w-[1100px] bg-gray-200 py-6'>
@@ -57,7 +53,7 @@ export default function ProductList() {
       <div className='container'>
         <div className='grid grid-cols-12 gap-6'>
           <div className='col-span-3'>
-            <AsideFilter queryConfig={queryConfig} dataCategory={dataCategory?.data.data} />
+            <AsideFilter />
           </div>
           <div className='col-span-9'>
             <SortProductList queryConfig={queryConfig} pageSize={Number(productList?.data.data.pagination.page_size)} />
@@ -71,5 +67,5 @@ export default function ProductList() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import type { RegisterOptions, UseFormGetValues } from 'react-hook-form' // Chỗ này là chỉ import type và interface của RegisterOptions
-import * as yup from 'yup'
+import type { RegisterOptions, UseFormGetValues } from 'react-hook-form'; // Chỗ này là chỉ import type và interface của RegisterOptions
+import * as yup from 'yup';
 
-type Rules = { [key in 'email' | 'password' | 'confirm_password']?: RegisterOptions }
+type Rules = { [key in 'email' | 'password' | 'confirm_password']?: RegisterOptions };
 
 const handleConfirmPassword = (refField: string) => {
   return yup
@@ -9,8 +9,8 @@ const handleConfirmPassword = (refField: string) => {
     .required('Confirm Password là bắt buộc')
     .min(6, 'Độ dài từ 6 - 160 ký tự')
     .max(160, 'Độ dài từ 160 - 160 ký tự')
-    .oneOf([yup.ref(refField), null], 'Confirm Password phải trùng với Password')
-}
+    .oneOf([yup.ref(refField), null], 'Confirm Password phải trùng với Password');
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getRules = (getValues?: UseFormGetValues<any>): Rules => ({
@@ -64,7 +64,7 @@ export const getRules = (getValues?: UseFormGetValues<any>): Rules => ({
         ? (value) => value === getValues('password') || 'Confirm Password phải trùng với Password'
         : undefined
   }
-})
+});
 
 export const schema = yup
   .object({
@@ -84,33 +84,33 @@ export const schema = yup
       name: 'price-not-allowed',
       message: 'Giá không phù hợp',
       test: function (value) {
-        const price_min = value
-        const { price_max } = this.parent as { price_min: string; price_max: string }
+        const price_min = value;
+        const { price_max } = this.parent as { price_min: string; price_max: string };
         if (price_min !== '' && price_max !== '') {
-          return Number(price_min) <= Number(price_max)
+          return Number(price_min) <= Number(price_max);
         }
-        if (price_min === '' && price_max === '') return false
+        if (price_min === '' && price_max === '') return false;
 
-        return true
+        return true;
       }
     }),
     price_max: yup.string().test({
       name: 'price-max-not-allowed',
       message: 'Giá không phù hợp',
       test: function (value) {
-        const price_max = value
-        const { price_min } = this.parent as { price_min: string; price_max: string }
+        const price_max = value;
+        const { price_min } = this.parent as { price_min: string; price_max: string };
         if (price_min !== '' && price_max !== '') {
-          return Number(price_min) <= Number(price_max)
+          return Number(price_min) <= Number(price_max);
         }
-        if (price_min === '' && price_max === '') return false
+        if (price_min === '' && price_max === '') return false;
 
-        return true
+        return true;
       }
     }),
     name: yup.string().trim().required('Tên sản phẩm là bắt buộc')
   })
-  .required()
+  .required();
 
 export const userSchema = yup.object({
   name: yup.string().max(160, 'Độ dài tối đa là 160 ký tự'),
@@ -125,8 +125,8 @@ export const userSchema = yup.object({
   password: schema.fields['password'],
   confirm_password: handleConfirmPassword('new_password'),
   avatar: yup.string().max(1000, 'Độ dài tối đa là 1000 ký tự')
-})
+});
 
-export type Schema = yup.InferType<typeof schema>
+export type Schema = yup.InferType<typeof schema>;
 
-export type UserSchema = yup.InferType<typeof userSchema>
+export type UserSchema = yup.InferType<typeof userSchema>;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const path = require('path')
+const path = require('path');
 
 module.exports = {
   extends: [
@@ -15,7 +15,7 @@ module.exports = {
     // Disable các rule mà eslint xung đột với prettier.
     // Để cái này ở dưới để nó override các rule phía trên!.
     'eslint-config-prettier',
-    'prettier',
+    'prettier'
   ],
   plugins: ['prettier'],
   settings: {
@@ -44,7 +44,7 @@ module.exports = {
       'warn',
       {
         arrowParens: 'always',
-        semi: false,
+        semi: true,
         trailingComma: 'none',
         tabWidth: 2,
         endOfLine: 'auto',
@@ -55,4 +55,4 @@ module.exports = {
       }
     ]
   }
-}
+};

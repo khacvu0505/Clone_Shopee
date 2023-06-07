@@ -1,112 +1,112 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { useNavigate, useParams } from 'react-router-dom'
-import { getProductDetail, getProductList } from 'src/api/product.api'
-import ProductRating from 'src/components/ProductRating'
-import { formatCurrency, rateSale, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils/utils'
-import DOMPurify from 'isomorphic-dompurify'
-import { Product, ProductListConfig } from 'src/types/product.type'
-import ProductItemComponent from '../ProductList/components/Product'
-import QuantityController from 'src/components/QuantityController'
-import { addToCart } from 'src/api/purchase.api'
-import { useQueryClientHook } from 'src/hooks/useQueryClient'
-import { PurchaseStatus } from 'src/constant/purchase'
-import { path } from 'src/constant/path'
-import { useTranslation } from 'react-i18next'
-import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin'
-import Loading from 'src/components/Loading'
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getProductDetail, getProductList } from 'src/api/product.api';
+import ProductRating from 'src/components/ProductRating';
+import { formatCurrency, rateSale, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils/utils';
+import DOMPurify from 'isomorphic-dompurify';
+import { Product, ProductListConfig } from 'src/types/product.type';
+import ProductItemComponent from '../ProductList/components/Product';
+import QuantityController from 'src/components/QuantityController';
+import { addToCart } from 'src/api/purchase.api';
+import { useQueryClientHook } from 'src/hooks/useQueryClient';
+import { PurchaseStatus } from 'src/constant/purchase';
+import { path } from 'src/constant/path';
+import { useTranslation } from 'react-i18next';
+import { useVerifyIsLogin } from 'src/hooks/useVerifyIsLogin';
+import Loading from 'src/components/Loading';
 
 export default function ProductDetail() {
-  const isLogin = useVerifyIsLogin()
-  const { nameId } = useParams()
-  const id = getIdFromNameId(nameId as string)
-  const queryClient = useQueryClientHook()
-  const navigate = useNavigate()
-  const { t } = useTranslation(['product'])
+  const isLogin = useVerifyIsLogin();
+  const { nameId } = useParams();
+  const id = getIdFromNameId(nameId as string);
+  const queryClient = useQueryClientHook();
+  const navigate = useNavigate();
+  const { t } = useTranslation(['product']);
 
-  const [buyCount, setBuyCount] = useState(1)
+  const [buyCount, setBuyCount] = useState(1);
 
   const { data: dataProductDetail } = useQuery({
     queryKey: ['productDetail', id],
     queryFn: () => getProductDetail(id as string),
     enabled: !!id
-  })
+  });
 
-  const product = dataProductDetail?.data.data
+  const product = dataProductDetail?.data.data;
 
-  const queryConfig = { page: 1, limit: 20, category: product?.category._id }
+  const queryConfig = { page: 1, limit: 20, category: product?.category._id };
 
   const { data: dataProductList, isLoading } = useQuery({
     queryKey: ['productList', queryConfig],
     queryFn: () => getProductList(queryConfig as ProductListConfig),
     enabled: Boolean(product),
     staleTime: 3 * 60 * 1000
-  })
+  });
 
   const addToCartMutation = useMutation({
     mutationKey: ['addToCart'],
     mutationFn: (data: { product_id: string; buy_count: number }) => addToCart(data)
-  })
+  });
 
-  const [currentIndexImage, setCurrentIndexImage] = useState([0, 5])
-  const [currentImage, setActiveImg] = useState('')
+  const [currentIndexImage, setCurrentIndexImage] = useState([0, 5]);
+  const [currentImage, setActiveImg] = useState('');
 
-  const imageRef = useRef<HTMLImageElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null);
 
   const currentImages = useMemo(() => {
-    return product?.images.slice(...currentIndexImage) || []
-  }, [product, currentIndexImage])
+    return product?.images.slice(...currentIndexImage) || [];
+  }, [product, currentIndexImage]);
 
   useEffect(() => {
     if (product && product.images.length > 0) {
-      setActiveImg(product.images[0])
+      setActiveImg(product.images[0]);
     }
-  }, [product])
+  }, [product]);
 
   const chooseActive = (img: string) => {
-    setActiveImg(img)
-  }
+    setActiveImg(img);
+  };
 
   const next = () => {
     if (currentIndexImage[1] < (product as Product)?.images.length) {
-      setCurrentIndexImage((prev) => [prev[0] + 1, prev[1] + 1])
+      setCurrentIndexImage((prev) => [prev[0] + 1, prev[1] + 1]);
     }
-  }
+  };
   const previous = () => {
     if (currentIndexImage[0] > 0) {
-      setCurrentIndexImage((prev) => [prev[0] - 1, prev[1] - 1])
+      setCurrentIndexImage((prev) => [prev[0] - 1, prev[1] - 1]);
     }
-  }
+  };
 
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const rect = event.currentTarget.getBoundingClientRect()
-    const image = imageRef.current as HTMLImageElement
-    const { naturalHeight, naturalWidth } = image
+    const rect = event.currentTarget.getBoundingClientRect();
+    const image = imageRef.current as HTMLImageElement;
+    const { naturalHeight, naturalWidth } = image;
     // Bubble event: khi hover vào thằng con cũng là hover vào thằng cha nên là { naturalHeight, naturalWidth } sẽ khác nhau => dẫn đến bị giật lag
 
     // Cách 1: Lấy offsetX, offsetY đơn giản khi chúng ta xử lý được bubble event
     // const { offsetX, offsetY } = event.nativeEvent
 
     // Cách 2: Lấy offsetX, offsetY đơn giản khi chúng ta KHÔNG xử lý được bubble event
-    const offsetX = event.pageX - (rect.x + window.scrollX)
-    const offsetY = event.pageY - (rect.y + window.scrollY)
+    const offsetX = event.pageX - (rect.x + window.scrollX);
+    const offsetY = event.pageY - (rect.y + window.scrollY);
 
-    const top = offsetY * (1 - naturalHeight / rect.height)
-    const left = offsetX * (1 - naturalWidth / rect.width)
-    image.style.width = naturalWidth + 'px'
-    image.style.height = naturalHeight + 'px'
-    image.style.maxWidth = 'unset'
-    image.style.top = top + 'px'
-    image.style.left = left + 'px'
-  }
+    const top = offsetY * (1 - naturalHeight / rect.height);
+    const left = offsetX * (1 - naturalWidth / rect.width);
+    image.style.width = naturalWidth + 'px';
+    image.style.height = naturalHeight + 'px';
+    image.style.maxWidth = 'unset';
+    image.style.top = top + 'px';
+    image.style.left = left + 'px';
+  };
 
   const handleRemoveZoom = () => {
-    imageRef.current?.removeAttribute('style')
-  }
+    imageRef.current?.removeAttribute('style');
+  };
 
   const handleBuyCount = (value: number) => {
-    setBuyCount(value)
-  }
+    setBuyCount(value);
+  };
 
   const handleAddToCart = () => {
     if (isLogin) {
@@ -114,14 +114,14 @@ export default function ProductDetail() {
         { buy_count: buyCount, product_id: product?._id as string },
         {
           onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
+            queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] });
           }
         }
-      )
-      return
+      );
+      return;
     }
-    navigate(path.login)
-  }
+    navigate(path.login);
+  };
 
   const handleBuyNow = () => {
     if (isLogin) {
@@ -129,23 +129,23 @@ export default function ProductDetail() {
         { buy_count: buyCount, product_id: product?._id as string },
         {
           onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] })
-            const purchase = data.data.data
+            queryClient.invalidateQueries({ queryKey: ['purchases', PurchaseStatus.inCart] });
+            const purchase = data.data.data;
             navigate(path.cart, {
               state: {
                 purchaseId: purchase._id
               }
-            })
+            });
           }
         }
-      )
-      return
+      );
+      return;
     }
-    navigate(path.login)
-  }
-  if (isLoading) return <Loading />
+    navigate(path.login);
+  };
+  if (isLoading) return <Loading />;
 
-  if (!product) return null
+  if (!product) return null;
 
   return (
     <div className='min-w-[1100px] bg-gray-200'>
@@ -183,7 +183,7 @@ export default function ProductDetail() {
                   </svg>
                 </button>
                 {currentImages.map((img, index) => {
-                  const isActive = currentImage === img
+                  const isActive = currentImage === img;
                   return (
                     <div
                       aria-hidden='true'
@@ -194,7 +194,7 @@ export default function ProductDetail() {
                       <img alt='img_product' src={img} className='absolute top-0 left-0 h-full w-full cursor-pointer' />
                       {isActive && <div className='absolute inset-0 border-2 border-orange'></div>}
                     </div>
-                  )
+                  );
                 })}
                 <button
                   className='absolute top-1/2 right-0 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
@@ -306,5 +306,5 @@ export default function ProductDetail() {
         </div>
       </div>
     </div>
-  )
+  );
 }
