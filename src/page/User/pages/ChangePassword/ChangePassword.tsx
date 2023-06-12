@@ -18,9 +18,7 @@ const changePasswordSchema = userSchema.pick(['password', 'confirm_password', 'n
 export default function ChangePassword() {
   const {
     register,
-    control,
     setError,
-    setValue,
     handleSubmit,
     reset,
     formState: { errors }

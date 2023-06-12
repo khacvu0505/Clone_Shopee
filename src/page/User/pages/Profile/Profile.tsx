@@ -223,7 +223,7 @@ export default function Profile() {
             </div>
 
             <InputFile onChange={handleChangeFile} />
-            <div className='mt-3 text-gray-400'>Dụng lượng file tối đa 1 MB</div>
+            <div className='mt-3 text-gray-400'>Dung lượng file tối đa 1 MB</div>
             <div className='mt-3 text-gray-400'>Định dạng:.JPEG, .PNG</div>
           </div>
         </form>

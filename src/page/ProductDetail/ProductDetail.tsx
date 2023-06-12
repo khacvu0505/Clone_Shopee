@@ -49,7 +49,7 @@ export default function ProductDetail() {
   });
 
   const [currentIndexImage, setCurrentIndexImage] = useState([0, 5]);
-  const [currentImage, setActiveImg] = useState('');
+  const [activeImg, setActiveImg] = useState('');
 
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -67,12 +67,12 @@ export default function ProductDetail() {
     setActiveImg(img);
   };
 
-  const next = () => {
+  const handleClickNextButton = () => {
     if (currentIndexImage[1] < (product as Product)?.images.length) {
       setCurrentIndexImage((prev) => [prev[0] + 1, prev[1] + 1]);
     }
   };
-  const previous = () => {
+  const handleClickPreviousButton = () => {
     if (currentIndexImage[0] > 0) {
       setCurrentIndexImage((prev) => [prev[0] - 1, prev[1] - 1]);
     }
@@ -162,14 +162,14 @@ export default function ProductDetail() {
                 <img
                   className='pointer-events-none absolute top-0 left-0 h-full w-full bg-white object-cover'
                   alt={product.name}
-                  src={currentImage}
+                  src={activeImg}
                   ref={imageRef}
                 />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
                 <button
                   className='absolute left-0 top-[50%] z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
-                  onClick={previous}
+                  onClick={handleClickPreviousButton}
                 >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -183,7 +183,7 @@ export default function ProductDetail() {
                   </svg>
                 </button>
                 {currentImages.map((img, index) => {
-                  const isActive = currentImage === img;
+                  const isActive = activeImg === img;
                   return (
                     <div
                       aria-hidden='true'
@@ -198,7 +198,7 @@ export default function ProductDetail() {
                 })}
                 <button
                   className='absolute top-1/2 right-0 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
-                  onClick={next}
+                  onClick={handleClickNextButton}
                 >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'

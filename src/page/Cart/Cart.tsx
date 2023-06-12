@@ -162,160 +162,154 @@ export default function Cart() {
   };
 
   if (isLoading) return <Loading />;
+  if (!extendedPurchases.length)
+    return (
+      <div className='2 container rounded-sm bg-white py-5 px-9 text-sm capitalize text-gray-500 shadow'>
+        Hiện chưa có sản phẩm trong giỏ hàng
+      </div>
+    );
 
   return (
     <div className='min-w-[1100px] bg-neutral-100 py-16'>
-      {extendedPurchases.length > 0 ? (
-        <div className='min-w-[1100px]'>
-          <div className='overflow-auto'>
-            <div className='min-w-[1000px]'>
-              <div className='grid grid-cols-12 rounded-sm bg-white py-5 px-9 text-sm capitalize text-gray-500 shadow'>
-                <div className='col-span-6'>
-                  <div className='flex items-center'>
-                    <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-                      <input
-                        type='checkbox'
-                        className='h-5 w-5 accent-orange'
-                        checked={isCheckedAll}
-                        onChange={handleCheckAll}
+      <div className='overflow-auto'>
+        <div className='min-w-[1000px]'>
+          <div className='grid grid-cols-12 rounded-sm bg-white py-5 px-9 text-sm capitalize text-gray-500 shadow'>
+            <div className='col-span-5'>
+              <div className='flex items-center'>
+                <div className='flex flex-shrink-0 items-center justify-center pr-3'>
+                  <input
+                    type='checkbox'
+                    className='h-5 w-5 accent-orange'
+                    checked={isCheckedAll}
+                    onChange={handleCheckAll}
+                  />
+                </div>
+                <div className='flex-grow text-black'>Sản phẩm</div>
+              </div>
+            </div>
+            <div className='col-span-7'>
+              <div className='grid grid-cols-5 text-center'>
+                <div className='col-span-2'>Đơn giá</div>
+                <div className='col-span-1'>Số lượng</div>
+                <div className='col-span-1'>Số tiền</div>
+                <div className='col-span-1'>Thao tác</div>
+              </div>
+            </div>
+          </div>
+          <div className='my-3 rounded-sm bg-white p-5 shadow'>
+            {extendedPurchases?.map((item, index: number) => (
+              <div
+                key={item._id}
+                className='mt-3 grid grid-cols-12 items-center rounded-sm border border-gray-200 bg-white py-5 px-4 text-center text-sm text-gray-500'
+              >
+                <div className='col-span-5 flex items-center'>
+                  <div className='flex flex-shrink-0 items-center justify-center pr-3'>
+                    <input
+                      type='checkbox'
+                      className='h-5 w-5 accent-orange'
+                      checked={item.checked}
+                      onChange={handleCheck(index)}
+                    />
+                  </div>
+                  <div className='flex-grow items-center'>
+                    <div className='flex items-center'>
+                      <Link
+                        to={`/product-detail/${generateNameId({
+                          name: item.product.name,
+                          id: item.product._id
+                        })}`}
+                        className='h-20 w-20 flex-shrink-0'
+                      >
+                        <img alt={item.product.name} src={item.product.image} />
+                      </Link>
+                      <div className='flex-grow px-2 pt-1 pb-2 text-left'>
+                        <Link
+                          to={`/product-detail/${generateNameId({
+                            name: item.product.name,
+                            id: item.product._id
+                          })}`}
+                          className='line-clamp-2'
+                        >
+                          {item.product.name}
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className='col-span-7'>
+                  <div className='grid grid-cols-5'>
+                    <div className='col-span-2'>
+                      <div className='flex items-center justify-center'>
+                        <span className='text-gray-300 line-through'>
+                          {formatCurrency(item.product.price_before_discount)}
+                        </span>
+                        <span className='ml-3'>{formatCurrency(item.product.price)}</span>
+                      </div>
+                    </div>
+                    <div className='col-span-1'>
+                      <QuantityController
+                        max={item.product.quantity}
+                        value={item.buy_count}
+                        onIncrease={() =>
+                          handleQuantity(index, item.buy_count + 1, item.buy_count >= item.product.quantity)
+                        }
+                        onDecrease={() => handleQuantity(index, item.buy_count - 1, item.buy_count <= 1)}
+                        onType={handleChangeInputQuantity(index)}
+                        onFocusOut={(value) => handleQuantity(index, value)}
                       />
                     </div>
-                    <div className='flex-grow text-black'>Sản phẩm</div>
-                  </div>
-                </div>
-                <div className='col-span-6'>
-                  <div className='grid grid-cols-5 text-center'>
-                    <div className='col-span-2'>Đơn giá</div>
-                    <div className='col-span-1'>Số lượng</div>
-                    <div className='col-span-1'>Số tiền</div>
-                    <div className='col-span-1'>Thao tác</div>
-                  </div>
-                </div>
-              </div>
-              <div className='my-3 rounded-sm bg-white p-5 shadow'>
-                {extendedPurchases?.map((item, index: number) => (
-                  <div
-                    key={item._id}
-                    className='mt-3 grid items-center rounded-sm border border-gray-200 bg-white py-5 px-4 text-center text-sm text-gray-500'
-                  >
-                    <div className='flex items-center'>
-                      <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-                        <input
-                          type='checkbox'
-                          className='h-5 w-5 accent-orange'
-                          checked={item.checked}
-                          onChange={handleCheck(index)}
-                        />
-                      </div>
-                      <div className='flex-grow items-center'>
-                        <div className='flex items-center'>
-                          <Link
-                            to={`/product-detail/${generateNameId({
-                              name: item.product.name,
-                              id: item.product._id
-                            })}`}
-                            className='h-20 w-20 flex-shrink-0'
-                          >
-                            <img alt={item.product.name} src={item.product.image} />
-                          </Link>
-                          <div className='flex-grow px-2 pt-1 pb-2 text-left'>
-                            <Link
-                              to={`/product-detail/${generateNameId({
-                                name: item.product.name,
-                                id: item.product._id
-                              })}`}
-                              className='line-clamp-2'
-                            >
-                              {item.product.name}
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
 
-                    <div>
-                      <div className='grid grid-cols-5 items-center'>
-                        <div className='col-span-2'>
-                          <div className='flex items-center justify-center'>
-                            <span className='text-gray-300 line-through'>
-                              {formatCurrency(item.product.price_before_discount)}
-                            </span>
-                            <span className='ml-3'>{formatCurrency(item.product.price)}</span>
-                          </div>
-                        </div>
-                        <div className='col-span-1'>
-                          <QuantityController
-                            max={item.product.quantity}
-                            value={item.buy_count}
-                            onIncrease={() =>
-                              handleQuantity(index, item.buy_count + 1, item.buy_count >= item.product.quantity)
-                            }
-                            onDecrease={() => handleQuantity(index, item.buy_count - 1, item.buy_count <= 1)}
-                            onType={handleChangeInputQuantity(index)}
-                            onFocusOut={(value) => handleQuantity(index, value)}
-                          />
-                        </div>
-                        <div className='col-span-1'>
-                          <span className='text-orange'>{formatCurrency(item.product.price * item.buy_count)}</span>
-                        </div>
-                        <div className='col-span-1'>
-                          <button
-                            className='bg-none text-black transition-colors  hover:text-orange'
-                            onClick={handleDelete(index)}
-                          >
-                            Xóa
-                          </button>
-                        </div>
-                      </div>
+                    <div className='col-span-1'>
+                      <span className='text-orange'>{formatCurrency(item.product.price * item.buy_count)}</span>
+                    </div>
+                    <div className='col-span-1'>
+                      <button
+                        className='bg-none text-black transition-colors  hover:text-orange'
+                        onClick={handleDelete(index)}
+                      >
+                        Xóa
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className='flex min-w-[1100px] justify-between rounded-sm bg-white p-5'>
-            <div className='flex items-center'>
-              <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-                <input
-                  type='checkbox'
-                  className='h-5 w-5 accent-orange'
-                  checked={isCheckedAll}
-                  onChange={handleCheckAll}
-                />
-              </div>
-              <button className='mx-3 border-none bg-none' onChange={handleCheckAll}>
-                Chọn tất cả ({listProductChoose.length})
-              </button>
-              <button className='mx-3 border-none bg-none' onClick={handleDeleteMulti}>
-                Xóa
-              </button>
-            </div>
-            <div className='mt-5  sm:mt-0'>
-              <div className='flex items-center'>
-                <div>Tổng thanh toán ({listProductChoose.length} sản phẩm)</div>
-                <div className='ml-2 text-2xl text-orange'>{formatCurrency(totalCheckedPurchasePrice)}</div>
-              </div>
-              <div className='flex items-center text-sm sm:justify-end'>
-                <div className='text-gray-500'>Tiết kiệm</div>
-                <div className='ml-6 text-orange'>
-                  {formatCurrency(totalCheckedPurchasePriceBeforeDiscount - totalCheckedPurchasePrice)}
                 </div>
               </div>
-            </div>
-            <Button
-              onClick={handleBuyPurchase}
-              className='mt-3 ml-0 flex h-10 w-52 items-center justify-center bg-red-500 text-sm uppercase text-white hover:bg-red-600 sm:ml-4 sm:mt-0'
-              isLoading={buyPurchasesMutation.isLoading}
-            >
-              Mua hàng
-            </Button>
+            ))}
           </div>
         </div>
-      ) : (
-        <div className='2 container rounded-sm bg-white py-5 px-9 text-sm capitalize text-gray-500 shadow'>
-          Hiện chưa có sản phẩm trong giỏ hàng
+      </div>
+      <div className='flex min-w-[1100px] justify-between rounded-sm bg-white p-5'>
+        <div className='flex items-center'>
+          <div className='flex flex-shrink-0 items-center justify-center pr-3'>
+            <input type='checkbox' className='h-5 w-5 accent-orange' checked={isCheckedAll} onChange={handleCheckAll} />
+          </div>
+          <button className='mx-3 border-none bg-none' onChange={handleCheckAll}>
+            Chọn tất cả ({listProductChoose.length})
+          </button>
+          <button className='mx-3 border-none bg-none' onClick={handleDeleteMulti}>
+            Xóa
+          </button>
         </div>
-      )}
+        <div className='mt-5  sm:mt-0'>
+          <div className='flex items-center'>
+            <div>Tổng thanh toán ({listProductChoose.length} sản phẩm)</div>
+            <div className='ml-2 text-2xl text-orange'>{formatCurrency(totalCheckedPurchasePrice)}</div>
+          </div>
+          <div className='flex items-center text-sm sm:justify-end'>
+            <div className='text-gray-500'>Tiết kiệm</div>
+            <div className='ml-6 text-orange'>
+              {formatCurrency(totalCheckedPurchasePriceBeforeDiscount - totalCheckedPurchasePrice)}
+            </div>
+          </div>
+        </div>
+        <Button
+          onClick={handleBuyPurchase}
+          className='mt-3 ml-0 flex h-10 w-52 items-center justify-center bg-red-500 text-sm uppercase text-white hover:bg-red-600 sm:ml-4 sm:mt-0'
+          isLoading={buyPurchasesMutation.isLoading}
+        >
+          Mua hàng
+        </Button>
+      </div>
     </div>
   );
 }
