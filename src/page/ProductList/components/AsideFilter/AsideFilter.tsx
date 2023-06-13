@@ -7,7 +7,9 @@ import InputNumber from 'src/components/InputNumber';
 import { useForm, Controller } from 'react-hook-form';
 import { Schema, schema } from 'src/utils/rules';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { isEmpty, omit } from 'lodash';
+import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
+
 import RatingStar from '../RatingStar';
 import useQueryConfig from 'src/hooks/useQueryConfig';
 import InputV2 from 'src/components/InputV2';

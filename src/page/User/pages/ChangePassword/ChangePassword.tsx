@@ -5,7 +5,7 @@ import { UserSchema, userSchema } from 'src/utils/rules';
 import { useMutation } from '@tanstack/react-query';
 import { updateProfile } from 'src/api/user.api';
 import { toast } from 'react-toastify';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { isAxiosUnprocessableEntity } from 'src/utils/utils';
 import { ErrorResponse } from 'src/types/utils.type';
 import Input from 'src/components/Input';
