@@ -79,7 +79,7 @@ export class Http {
         ) {
           const data: any | undefined = error.response?.data;
           const message = data?.message || error.message;
-          // toast.error(message)
+          toast.error(message);
         }
 
         // Lỗi Unauthorized(401) có rất nhiều trường hợp
@@ -111,7 +111,7 @@ export class Http {
           clearAccessTokenFromLocalStorage();
           this.accessToken = '';
           this.refreshToken = '';
-          toast.error(error.response?.data.message);
+          // toast.error(error.response?.data.message);
         }
         if (error) return Promise.reject(error);
       }

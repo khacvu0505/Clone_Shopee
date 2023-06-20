@@ -7,6 +7,7 @@ export default function CartHeader() {
   const { register, onSubmitSearch } = useSearchProduct();
   return (
     <div className=' border-b border-b-black/10'>
+      <title>Cart Header Component</title>
       <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
         <div className='container'>
           <NavHeader />

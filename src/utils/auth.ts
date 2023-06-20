@@ -17,12 +17,12 @@ export const clearAccessTokenFromLocalStorage = () => {
 
 export const getAccessTokenFromLocalStorage = () => {
   const result = localStorage.getItem('access_token');
-  return result ? result : '';
+  return result || '';
 };
 
 export const getRefreshTokenFromLocalStorage = () => {
   const result = localStorage.getItem('refresh_token');
-  return result ? result : '';
+  return result || '';
 };
 
 export const getProfile = () => {

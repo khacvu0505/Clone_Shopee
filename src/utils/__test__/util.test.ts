@@ -14,7 +14,7 @@ describe('isAxiosError', () => {
 
 describe('isAxiosUnprocessableEntity', () => {
   it('isAxiosUnprocessableEntity trả về boolean', () => {
-    expect(isAxiosUnprocessableEntity(new Error())).toBe(false);
+    expect(isAxiosError(new Error())).toBe(false);
     expect(
       isAxiosUnprocessableEntity(
         new AxiosError(undefined, undefined, undefined, undefined, {
@@ -25,7 +25,7 @@ describe('isAxiosUnprocessableEntity', () => {
     ).toBe(false);
   });
   it('isAxiosUnprocessableEntity trả về boolean', () => {
-    expect(isAxiosUnprocessableEntity(new Error())).toBe(false);
+    expect(isAxiosError(new AxiosError())).toBe(true);
     expect(
       isAxiosUnprocessableEntity(
         new AxiosError(undefined, undefined, undefined, undefined, {

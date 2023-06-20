@@ -2,23 +2,24 @@ import { describe, expect, test } from 'vitest';
 // app.test.js
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import matchers from '@testing-library/jest-dom/matchers';
 import App from './App';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import { logScreen, renderWithRouter } from './utils/__test__/testUtils';
+import { Provider, logScreen, renderWithRouter } from './utils/__test__/testUtils';
 import { path } from './constant/path';
 
 // test the same with it
 
-// Chỗ này là bởi vì đang dùng vitest => nên sẽ khác 1 tí
-expect.extend(matchers);
-
 describe('App', () => {
   test('App render và chuyển trang', async () => {
     // Chỗ này render component App
-    render(<App />, {
-      wrapper: BrowserRouter
-    });
+    render(
+      <Provider>
+        <App />
+      </Provider>,
+      {
+        wrapper: BrowserRouter
+      }
+    );
 
     /**
      * waitFor: sẽ run callback 1 vài lần
@@ -27,16 +28,23 @@ describe('App', () => {
      * mặc định : timeout = 1000ms và interval = 50ms
      */
 
-    // veryfi vào đúng trang chủ
+    // verify vào đúng trang chủ
     await waitFor(
       () => {
-        expect(document.querySelector('title')?.textContent).toBe('Trang chủ |Shopee Clone');
+        expect(document.querySelector('title')?.textContent).toBe('Trang chủ | Shopee Clone');
+        // Option 2
+        // expect(screen.getByText('Trang chủ | Shopee Clone')).toBeInTheDocument();
       },
       {
         timeout: 2000
       }
     );
 
+    // Chỗ này sẽ in ra cho chúng ta thấy là render ra cái gì
+    // screen.debug(document.parentElement as HTMLElement, 999999);
+  });
+
+  test('Test Page Navigate to Login Page', async () => {
     // Verify chuyển trang
     const user = userEvent.setup();
     await user.click(screen.getByText('Đăng nhập'));
@@ -48,9 +56,6 @@ describe('App', () => {
         timeout: 2000
       }
     );
-
-    // Chỗ này sẽ in ra cho chúng ta thấy là render ra cái gì
-    screen.debug(document.parentElement as HTMLElement, 999999);
   });
 
   test('Test Page Not Found', async () => {
@@ -59,7 +64,9 @@ describe('App', () => {
     // use <MemoryRouter> when you want to manually control the history
     render(
       <MemoryRouter initialEntries={[badRoute]}>
-        <App />
+        <Provider>
+          <App />
+        </Provider>
       </MemoryRouter>
     );
 
@@ -70,7 +77,7 @@ describe('App', () => {
     });
 
     // func console.log screen => debug terminal
-    await logScreen();
+    // await logScreen();
   });
 
   test('Render Register Page', async () => {

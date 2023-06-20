@@ -19,6 +19,7 @@ export default defineConfig({
     }
   },
   test: {
-    environment: 'jsdom' // or 'jsdom', 'node' , 'happy-dom
+    environment: 'jsdom', // or 'jsdom', 'node' , 'happy-dom,
+    setupFiles: path.resolve(__dirname, './vitest.setup.js')
   }
 });

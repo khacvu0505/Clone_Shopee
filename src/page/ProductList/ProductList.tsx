@@ -49,7 +49,7 @@ export default function ProductList() {
 
   return (
     <div className='min-w-[1100px] bg-gray-200 py-6'>
-      <title>Trang chủ |Shopee Clone</title>
+      <title>Trang chủ | Shopee Clone</title>
       <div className='container'>
         <div className='grid grid-cols-12 gap-6'>
           <div className='col-span-3'>

@@ -4,8 +4,10 @@ import App from 'src/App';
 import { BrowserRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import AppProvider, { getInitialContext } from 'src/contexts/app.context';
 
-const delay = (time: number) =>
+export const delay = (time: number) =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(true);
@@ -24,13 +26,46 @@ export const logScreen = async (
       ...options
     }
   );
-  screen.debug(body, 999999);
+  screen.debug(body, 999999999999);
 };
 
+export const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      },
+      mutations: {
+        retry: false
+      }
+    },
+    logger: {
+      log: console.log,
+      warn: console.warn,
+      // No more errors in the console
+      error: () => null
+    }
+  });
+  const Provider = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  return Provider;
+};
+
+export const Provider = createWrapper();
+
 export const renderWithRouter = ({ route = '/' } = {}) => {
+  const defaultValue = getInitialContext();
   window.history.pushState({}, 'Test page', route);
   return {
     user: userEvent.setup(),
-    ...render(<App />, { wrapper: BrowserRouter })
+    ...render(
+      <Provider>
+        <AppProvider defaultValue={defaultValue}>
+          <App />
+        </AppProvider>
+      </Provider>,
+      { wrapper: BrowserRouter }
+    )
   };
 };
